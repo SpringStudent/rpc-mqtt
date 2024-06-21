@@ -5,6 +5,9 @@ import io.github.springstudent.client.core.RpcExportFactory;
 public class NormalExportFactory implements RpcExportFactory {
     @Override
     public Object getExport(Class<?> clzz) {
-        return new MyExportService();
+        if (clzz.equals(MyExportService.class)) {
+            return new MyExportService();
+        }
+        return new Object();
     }
 }
