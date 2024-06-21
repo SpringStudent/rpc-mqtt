@@ -12,4 +12,4 @@
 
 #### 使用指导
 
-可参考rpc-mqtt-demo
+首先你需要一个mqtt broker, 代码可参考rpc-mqtt-demo
