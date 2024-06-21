@@ -16,6 +16,7 @@
         <module>rpc-mqtt-demo-client</module>
         <module>rpc-mqtt-demo-server</module>
         <module>rpc-mqtt-demo-client2</module>
+        <module>rpc-mqtt-demo-no-spring-client</module>
     </modules>
 
     <properties>
