@@ -9,15 +9,17 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * mqttclient包装
+ *
  * @author zhouning
  */
 public class RpcMqttClient implements MqttCallbackExtended {
 
-    protected Executor recieveExecutor;
+    protected ExecutorService recieveExecutor;
 
     protected MqttClient mqttClient;
 
@@ -65,13 +67,24 @@ public class RpcMqttClient implements MqttCallbackExtended {
     }
 
     public void subscribe(String[] topics) throws MqttException {
-        mqttClient.subscribe(topics, new int[]{QosType.QOS_EXACTLY_ONCE.type(),QosType.QOS_EXACTLY_ONCE.type()});
+        mqttClient.subscribe(topics, new int[]{QosType.QOS_EXACTLY_ONCE.type(), QosType.QOS_EXACTLY_ONCE.type()});
     }
 
     public void destroy() throws MqttException {
         if (mqttClient.isConnected()) {
             mqttClient.disconnect();
             mqttClient.close();
+        }
+        recieveExecutor.shutdown();
+        try {
+            if (!recieveExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                recieveExecutor.shutdownNow();
+                if (!recieveExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                }
+            }
+        } catch (InterruptedException ie) {
+            recieveExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 
