@@ -141,7 +141,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                         }
                     }
                 }
-                RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC + "/" + rpcMqttReq.getReqId(), Constants.mqttMessage(rpcMqttRes));
+                RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
             } catch (Exception e) {
                 logger.error("handle receive msg={} error", payload, e);
             }

@@ -1,6 +1,7 @@
 package io.github.springstudent.server.core;
 
 import io.github.springstudent.common.bean.*;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
     }
 
     public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws MqttException, InterruptedException {
+        checkRpcMqttReq(rpcMqttReq);
         List<String> onlineRemotes = RpcRemoteOnlineManager.onlineRemotes();
         if (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
@@ -57,6 +59,15 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
     }
 
+    private void checkRpcMqttReq(RpcMqttReq rpcMqttReq) {
+        if (StringUtils.isEmpty(rpcMqttReq.getServiceName())) {
+            throw new IllegalArgumentException("rpc mqtt serviceName cannot be null");
+        }
+        if (StringUtils.isEmpty(rpcMqttReq.getMethodName())) {
+            throw new IllegalArgumentException("rpc mqtt methodName cannot be null");
+        }
+    }
+
     private String randomSelect(List<String> onlineRemotes) {
         int length = onlineRemotes.size();
         return onlineRemotes.get(ThreadLocalRandom.current().nextInt(length));
@@ -66,7 +77,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
     public void connectComplete(boolean reconnect, String serverURI) {
         try {
             //connect succes then subscribe
-            super.subscribe(new String[]{Constants.RPC_MQTT_RES_TOPIC + "/#", Constants.RPC_MQTT_HEARTBEAT_TOPIC});
+            super.subscribe(new String[]{Constants.RPC_MQTT_RES_TOPIC, Constants.RPC_MQTT_HEARTBEAT_TOPIC});
             subscribeTime = System.currentTimeMillis();
             //let start method continue
             if (initLatch.getCount() > 0) {
@@ -95,7 +106,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
                     }
                 }
             } catch (Exception e) {
-                logger.error("handle receive msg={} error",payload,e);
+                logger.error("handle receive msg={} error", payload, e);
             }
         });
     }
