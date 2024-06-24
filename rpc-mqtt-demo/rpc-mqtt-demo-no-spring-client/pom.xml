@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.github.springstudent</groupId>
         <artifactId>rpc-mqtt-demo</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>rpc-mqtt-demo-no-spring-client</artifactId>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>io.github.springstudent</groupId>
             <artifactId>rpc-mqtt-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>
