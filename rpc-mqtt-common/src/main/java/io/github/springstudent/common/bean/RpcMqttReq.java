@@ -47,6 +47,10 @@ public class RpcMqttReq extends RpcMqttPayLoad {
         this.serviceName = serviceName;
     }
 
+    public void setServiceName(Class<?> serviceClss) {
+        this.serviceName = serviceClss.getSimpleName();
+    }
+
     public String getMethodName() {
         return methodName;
     }
@@ -59,11 +63,15 @@ public class RpcMqttReq extends RpcMqttPayLoad {
         return args;
     }
 
-    public void addArg(String jsonArg) {
+    public void addArg(Object jsonArg) {
         if (args == null || args.isEmpty()) {
             args = new ArrayList<>();
         }
-        args.add(jsonArg);
+        if (jsonArg instanceof String) {
+            args.add((String) jsonArg);
+        } else {
+            args.add(GsonUtil.toJson(jsonArg));
+        }
     }
 
     public boolean isBroadcastInvoke() {

@@ -79,7 +79,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq6.setClientId("service_client_111");
         rpcMqttReq6.addArg("{\"alpha\":[\"ddd\",\"fff\",\"ggg\"]}");
         rpcMqttReq6.addArg("hello");
-        rpcMqttReq6.addArg(GsonUtil.toJson(new Date()));
+        rpcMqttReq6.addArg(new Date());
         RpcMqttCall rpcMqttCall6 = rpcMqttInvoker.call(rpcMqttReq6);
         RpcMqttRes rpcMqttRes6 = rpcMqttCall6.awaitInSeconds(5);
         System.out.println(rpcMqttRes6);
@@ -93,7 +93,6 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall7 = rpcMqttInvoker.call(rpcMqttReq7);
         RpcMqttRes rpcMqttRes7 = rpcMqttCall7.awaitInSeconds(5);
         System.out.println(rpcMqttRes7);
-
         System.in.read();
     }
 }
