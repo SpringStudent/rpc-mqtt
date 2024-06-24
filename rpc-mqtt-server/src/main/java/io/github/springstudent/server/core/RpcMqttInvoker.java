@@ -37,7 +37,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         List<String> onlineRemotes = RpcRemoteOnlineManager.onlineRemotes();
         if (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
-            if (subscribeTime - System.currentTimeMillis() < Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
+            if (System.currentTimeMillis() - subscribeTime < Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
                 Thread.sleep(1000);
                 call(rpcMqttReq);
             } else {
