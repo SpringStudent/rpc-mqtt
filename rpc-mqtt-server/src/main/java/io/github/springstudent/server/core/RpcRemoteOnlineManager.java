@@ -23,7 +23,7 @@ public class RpcRemoteOnlineManager {
         List<String> result = new ArrayList<>();
         long now = System.currentTimeMillis();
         REMOTE_HEARTBEAT_MAP.forEach((aClientId, aLong) -> {
-            if ((aLong - now) <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1.5 * 1000L) {
+            if ((aLong - now) <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1.2 * 1000L) {
                 result.add(aClientId);
             }
         });
