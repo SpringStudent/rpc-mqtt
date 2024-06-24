@@ -29,5 +29,12 @@ public class RpcMqttInvokeTest2 {
         RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
         RpcMqttRes rpcMqttRes = rpcMqttCall.awaitInSeconds(5);
         System.out.println(rpcMqttRes);
+        //服务调用校验
+        try {
+            RpcMqttReq rpcMqttReq2 = new RpcMqttReq();
+            rpcMqttInvoker.call(rpcMqttReq2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
