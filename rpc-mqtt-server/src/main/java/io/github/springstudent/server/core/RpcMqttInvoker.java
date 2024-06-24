@@ -48,7 +48,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
             if (rpcMqttReq.isBroadcastInvoke()) {
                 rpcMqttReq.setClientId(null);
             } else if (rpcMqttReq.getClientId() == null) {
-                clientId = randomSelect(onlineRemotes);
+                clientId = doSelect(onlineRemotes);
                 rpcMqttReq.setClientId(clientId);
             }
         }
@@ -68,7 +68,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         }
     }
 
-    private String randomSelect(List<String> onlineRemotes) {
+    protected String doSelect(List<String> onlineRemotes) {
         int length = onlineRemotes.size();
         return onlineRemotes.get(ThreadLocalRandom.current().nextInt(length));
     }
