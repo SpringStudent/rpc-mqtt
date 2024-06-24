@@ -9,11 +9,7 @@ public class RpcMqttConfig {
 
     private String mqttBrokerAddress;
 
-    private String mqttClientIdPrefix;
-
-    private Boolean mqttAutomaticReconnection;
-
-    private Boolean mqttCleanSession;
+    private String mqttClientId;
 
     private Integer mqttConnectionTimeout;
 
@@ -33,28 +29,12 @@ public class RpcMqttConfig {
         this.mqttBrokerAddress = mqttBrokerAddress;
     }
 
-    public String getMqttClientIdPrefix() {
-        return mqttClientIdPrefix;
+    public String getMqttClientId() {
+        return mqttClientId;
     }
 
-    public void setMqttClientIdPrefix(String mqttClientIdPrefix) {
-        this.mqttClientIdPrefix = mqttClientIdPrefix;
-    }
-
-    public Boolean getMqttAutomaticReconnection() {
-        return mqttAutomaticReconnection;
-    }
-
-    public void setMqttAutomaticReconnection(Boolean mqttAutomaticReconnection) {
-        this.mqttAutomaticReconnection = mqttAutomaticReconnection;
-    }
-
-    public Boolean getMqttCleanSession() {
-        return mqttCleanSession;
-    }
-
-    public void setMqttCleanSession(Boolean mqttCleanSession) {
-        this.mqttCleanSession = mqttCleanSession;
+    public void setMqttClientId(String mqttClientId) {
+        this.mqttClientId = mqttClientId;
     }
 
     public Integer getMqttConnectionTimeout() {

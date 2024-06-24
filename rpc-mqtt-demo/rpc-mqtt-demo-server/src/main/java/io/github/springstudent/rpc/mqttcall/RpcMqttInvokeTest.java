@@ -19,11 +19,9 @@ public class RpcMqttInvokeTest {
         RpcMqttInvoker rpcMqttInvoker = new RpcMqttInvoker();
         RpcMqttConfig rpcMqttConfig = new RpcMqttConfig();
         rpcMqttConfig.setMqttBrokerAddress("tcp://172.16.2.88:8002");
-        rpcMqttConfig.setMqttClientIdPrefix("service_call");
+        rpcMqttConfig.setMqttClientId("service_call");
         rpcMqttConfig.setMqttUsername("-1");
         rpcMqttConfig.setMqttPassword("15ead68628334b4d851df1badb8be508");
-        rpcMqttConfig.setMqttAutomaticReconnection(true);
-        rpcMqttConfig.setMqttCleanSession(true);
         rpcMqttConfig.setMqttKeepAliveInterval(60);
         rpcMqttConfig.setMqttConnectionTimeout(30);
         rpcMqttInvoker.start(rpcMqttConfig);

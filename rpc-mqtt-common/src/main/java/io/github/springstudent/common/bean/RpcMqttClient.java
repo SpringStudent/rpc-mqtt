@@ -34,25 +34,20 @@ public class RpcMqttClient implements MqttCallbackExtended {
         } else {
             mqttDefaultFilePersistence = new MqttDefaultFilePersistence();
         }
-        this.clientId = rpcMqttConfig.getMqttClientIdPrefix() + getClientIdSuffix();
+        this.clientId = rpcMqttConfig.getMqttClientId();
         mqttClient = new MqttClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setUserName(rpcMqttConfig.getMqttUsername());
         mqttConnectOptions.setPassword(rpcMqttConfig.getMqttPassword().toCharArray());
-        mqttConnectOptions.setCleanSession(rpcMqttConfig.getMqttCleanSession());
         mqttConnectOptions.setConnectionTimeout(rpcMqttConfig.getMqttConnectionTimeout());
         mqttConnectOptions.setKeepAliveInterval(rpcMqttConfig.getMqttKeepAliveInterval());
-        mqttConnectOptions.setAutomaticReconnect(rpcMqttConfig.getMqttAutomaticReconnection());
+        mqttConnectOptions.setCleanSession(true);
+        mqttConnectOptions.setAutomaticReconnect(true);
         mqttClient.setCallback(this);
         if (!isConnected()) {
             mqttClient.connect(mqttConnectOptions);
         }
     }
-
-    protected String getClientIdSuffix() {
-        return Constants.EMPTY_STR;
-    }
-
 
     public void publish(String topic, MqttMessage mqttMessage) throws MqttException {
         mqttClient.publish(topic, mqttMessage);
@@ -90,6 +85,18 @@ public class RpcMqttClient implements MqttCallbackExtended {
 
     public void mqttConfig(RpcMqttConfig rpcMqttConfig) {
         this.rpcMqttConfig = rpcMqttConfig;
+        if (StringUtils.isEmpty(rpcMqttConfig.getMqttBrokerAddress())) {
+            throw new IllegalArgumentException("mqtt broker address cannot be null");
+        }
+        if (StringUtils.isEmpty(rpcMqttConfig.getMqttClientId())) {
+            throw new IllegalArgumentException("mqtt clientId cannot be null");
+        }
+        if (rpcMqttConfig.getMqttConnectionTimeout() == null) {
+            rpcMqttConfig.setMqttConnectionTimeout(Constants.RPC_MQTT_CONNECT_TIMEOUT);
+        }
+        if (rpcMqttConfig.getMqttKeepAliveInterval() == null) {
+            rpcMqttConfig.setMqttKeepAliveInterval(Constants.RPC_MQTT_KEEPALIVE_INTERNAL_TIMEOUT);
+        }
     }
 
     @Override

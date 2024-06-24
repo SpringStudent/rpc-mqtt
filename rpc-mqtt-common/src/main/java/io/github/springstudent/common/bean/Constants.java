@@ -18,12 +18,13 @@ public class Constants {
 
     public static final String RPC_MQTT_HEARTBEAT_TOPIC = "rpc/mqtt/heartbeat";
 
-    public static final String EMPTY_STR = "";
-
     public static final byte RPC_MQTT_RES_OK = 0x00;
     public static final byte RPC_MQTT_RES_SERVICE_NOT_FOUND = 0x01;
     public static final byte RPC_MQTT_RES_METHOD_NOT_FOUND = 0x02;
     public static final byte RPC_MQTT_RES_INVOKE_ERROR = 0x03;
+
+    public static int RPC_MQTT_CONNECT_TIMEOUT = 30;
+    public static int RPC_MQTT_KEEPALIVE_INTERNAL_TIMEOUT = 60;
 
     public static MqttMessage heartBeat(String clientId) {
         MqttMessage mqttMessage = new MqttMessage();
