@@ -56,7 +56,6 @@ public class RpcMqttInvoker extends RpcMqttClient {
         super.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(rpcMqttReq));
         CALLS.put(rpcMqttReq.getReqId(), rpcMqttCall);
         return rpcMqttCall;
-
     }
 
     private void checkRpcMqttReq(RpcMqttReq rpcMqttReq) {

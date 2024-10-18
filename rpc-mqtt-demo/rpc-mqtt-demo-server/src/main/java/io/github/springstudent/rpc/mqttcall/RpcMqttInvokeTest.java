@@ -18,7 +18,7 @@ public class RpcMqttInvokeTest {
     public static void main(String[] args) throws MqttException, ExecutionException, InterruptedException, TimeoutException, IOException {
         RpcMqttInvoker rpcMqttInvoker = new RpcMqttInvoker();
         RpcMqttConfig rpcMqttConfig = new RpcMqttConfig();
-        rpcMqttConfig.setMqttBrokerAddress("tcp://172.16.2.88:8002");
+        rpcMqttConfig.setMqttBrokerAddress("tcp://localhost:1883");
         rpcMqttConfig.setMqttClientId("service_call");
         rpcMqttConfig.setMqttUsername("-1");
         rpcMqttConfig.setMqttPassword("15ead68628334b4d851df1badb8be508");
@@ -26,12 +26,16 @@ public class RpcMqttInvokeTest {
         rpcMqttConfig.setMqttConnectionTimeout(30);
         rpcMqttInvoker.start(rpcMqttConfig);
         //广播调用
-        RpcMqttReq rpcMqttReq = new RpcMqttReq();
-        rpcMqttReq.setServiceName("ExportService");
-        rpcMqttReq.setMethodName("sayHello");
-        RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
-        RpcMqttRes rpcMqttRes = rpcMqttCall.awaitInSeconds(5);
-        System.out.println(rpcMqttRes);
+        System.out.println("=====broadcast invoke start");
+        for(int i=0;i<10;i++){
+            RpcMqttReq rpcMqttReq = new RpcMqttReq();
+            rpcMqttReq.setServiceName("ExportService");
+            rpcMqttReq.setMethodName("sayHello");
+            RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
+            RpcMqttRes rpcMqttRes = rpcMqttCall.awaitInSeconds(5);
+            System.out.println(rpcMqttRes);
+        }
+        System.out.println("=====broadcast invoke end");
         //随机一台机器调用
         RpcMqttReq rpcMqttReq2 = new RpcMqttReq();
         rpcMqttReq2.setServiceName("ExportService");

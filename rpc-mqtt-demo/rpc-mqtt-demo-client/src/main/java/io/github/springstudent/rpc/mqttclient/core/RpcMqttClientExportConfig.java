@@ -20,7 +20,7 @@ public class RpcMqttClientExportConfig {
     public RpcMqttRemote rpcMqttClient() throws MqttException {
         RpcMqttRemote rpcMqttRemote = new RpcMqttRemote();
         RpcMqttConfig rpcMqttConfig = new RpcMqttConfig();
-        rpcMqttConfig.setMqttBrokerAddress("tcp://172.16.2.88:8002");
+        rpcMqttConfig.setMqttBrokerAddress("tcp://localhost:1883");
         rpcMqttConfig.setMqttClientId("service_client_111");
         rpcMqttConfig.setMqttUsername("-1");
         rpcMqttConfig.setMqttPassword("15ead68628334b4d851df1badb8be508");
