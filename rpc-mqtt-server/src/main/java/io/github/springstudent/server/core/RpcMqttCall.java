@@ -48,6 +48,9 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
         return CALLS.get(id);
     }
 
+    public static void destroy() {
+        CALLS.clear();
+    }
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
