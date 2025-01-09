@@ -32,7 +32,7 @@ public class RpcMqttInvokeTest {
             rpcMqttReq.setServiceName("ExportService");
             rpcMqttReq.setMethodName("sayHello");
             RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
-            RpcMqttRes rpcMqttRes = rpcMqttCall.awaitInSeconds(5);
+            RpcMqttRes rpcMqttRes = rpcMqttCall.get();
             System.out.println(rpcMqttRes);
         }
         System.out.println("=====broadcast invoke end");
@@ -42,7 +42,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq2.setMethodName("sayHello");
         rpcMqttReq2.setBroadcastInvoke(false);
         RpcMqttCall rpcMqttCall2 = rpcMqttInvoker.call(rpcMqttReq2);
-        RpcMqttRes rpcMqttRes2 = rpcMqttCall2.awaitInSeconds(5);
+        RpcMqttRes rpcMqttRes2 = rpcMqttCall2.get();
         System.out.println(rpcMqttRes2);
 
         //根据clientId指定一台机器调用
@@ -53,7 +53,7 @@ public class RpcMqttInvokeTest {
             rpcMqttReq3.setBroadcastInvoke(false);
             rpcMqttReq3.setClientId("service_client_111");
             RpcMqttCall rpcMqttCall3 = rpcMqttInvoker.call(rpcMqttReq3);
-            RpcMqttRes rpcMqttRes3 = rpcMqttCall3.awaitInSeconds(5);
+            RpcMqttRes rpcMqttRes3 = rpcMqttCall3.get();
             System.out.println(rpcMqttRes3);
         }
 
@@ -62,7 +62,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq4.setMethodName("sayHello");
         rpcMqttReq4.setBroadcastInvoke(false);
         RpcMqttCall rpcMqttCall4 = rpcMqttInvoker.call(rpcMqttReq4);
-        RpcMqttRes rpcMqttRes4 = rpcMqttCall4.awaitInSeconds(5);
+        RpcMqttRes rpcMqttRes4 = rpcMqttCall4.get();
         System.out.println(rpcMqttRes4);
         //调用有返回值的方法
         RpcMqttReq rpcMqttReq5 = new RpcMqttReq();
@@ -71,7 +71,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq5.setBroadcastInvoke(false);
         rpcMqttReq5.setClientId("service_client_111");
         RpcMqttCall rpcMqttCall5 = rpcMqttInvoker.call(rpcMqttReq5);
-        RpcMqttRes rpcMqttRes5 = rpcMqttCall5.awaitInSeconds(5);
+        RpcMqttRes rpcMqttRes5 = rpcMqttCall5.get();
         System.out.println(rpcMqttRes5);
         //调用既有返回值又有参数的方法
         RpcMqttReq rpcMqttReq6 = new RpcMqttReq();
@@ -83,7 +83,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq6.addArg("hello");
         rpcMqttReq6.addArg(new Date());
         RpcMqttCall rpcMqttCall6 = rpcMqttInvoker.call(rpcMqttReq6);
-        RpcMqttRes rpcMqttRes6 = rpcMqttCall6.awaitInSeconds(5);
+        RpcMqttRes rpcMqttRes6 = rpcMqttCall6.get();
         System.out.println(rpcMqttRes6);
         //调用重载方法
         RpcMqttReq rpcMqttReq7 = new RpcMqttReq();
@@ -93,7 +93,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq7.setClientId("service_client_111");
         rpcMqttReq7.addArg("hello");
         RpcMqttCall rpcMqttCall7 = rpcMqttInvoker.call(rpcMqttReq7);
-        RpcMqttRes rpcMqttRes7 = rpcMqttCall7.awaitInSeconds(5);
+        RpcMqttRes rpcMqttRes7 = rpcMqttCall7.get();
         System.out.println(rpcMqttRes7);
         System.in.read();
     }

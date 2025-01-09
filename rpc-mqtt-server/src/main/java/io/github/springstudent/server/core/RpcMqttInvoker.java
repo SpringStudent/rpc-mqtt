@@ -23,7 +23,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
     private long subscribeTime;
     private CountDownLatch initLatch = new CountDownLatch(1);
-    private static final Map<Long, RpcMqttCall> CALLS = new ConcurrentHashMap<>();
+
 
     public void start(RpcMqttConfig rpcMqttConfig) throws MqttException, InterruptedException {
         this.recieveExecutor = Executors.newFixedThreadPool(20, new NamedThreadFactory("rpc-mqtt-invoker-"));
@@ -52,9 +52,8 @@ public class RpcMqttInvoker extends RpcMqttClient {
                 rpcMqttReq.setClientId(clientId);
             }
         }
-        RpcMqttCall rpcMqttCall = new RpcMqttCall(new CompletableFuture());
+        RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(rpcMqttReq);
         super.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(rpcMqttReq));
-        CALLS.put(rpcMqttReq.getReqId(), rpcMqttCall);
         return rpcMqttCall;
     }
 
@@ -99,9 +98,9 @@ public class RpcMqttInvoker extends RpcMqttClient {
                     //response payload
                     RpcMqttRes rpcMqttRes = GsonUtil.toJavaObject(payload, RpcMqttRes.class);
                     RpcRemoteOnlineManager.heartBeat(rpcMqttRes.getClientId());
-                    RpcMqttCall call = CALLS.remove(rpcMqttRes.getReqId());
+                    RpcMqttCall call = RpcMqttCall.getFuture(rpcMqttRes.getReqId());
                     if (call != null) {
-                        call.getCallFuture().complete(rpcMqttRes);
+                        call.complete(rpcMqttRes);
                     }
                 }
             } catch (Exception e) {

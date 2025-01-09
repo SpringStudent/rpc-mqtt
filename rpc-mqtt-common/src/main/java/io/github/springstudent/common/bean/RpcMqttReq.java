@@ -23,12 +23,15 @@ public class RpcMqttReq extends RpcMqttPayLoad {
 
     private List<String> args;
 
+    private int timeout;
+
     static {
         CALL_ID = new AtomicLong(ThreadLocalRandom.current().nextLong());
     }
 
     public RpcMqttReq() {
         this.reqId = CALL_ID.getAndIncrement();
+        this.timeout = Constants.RPC_MQTT_REQUEST_TIMEOUT * 1000;
     }
 
     public long getReqId() {
@@ -80,5 +83,13 @@ public class RpcMqttReq extends RpcMqttPayLoad {
 
     public void setBroadcastInvoke(boolean broadcastInvoke) {
         this.broadcastInvoke = broadcastInvoke;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }

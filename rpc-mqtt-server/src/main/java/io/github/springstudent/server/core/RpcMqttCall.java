@@ -1,28 +1,83 @@
 package io.github.springstudent.server.core;
 
+import io.github.springstudent.common.bean.Constants;
+import io.github.springstudent.common.bean.RpcMqttReq;
 import io.github.springstudent.common.bean.RpcMqttRes;
+import io.github.springstudent.common.timer.Timeout;
+import io.github.springstudent.common.timer.TimerTask;
 
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 调用结果封装
  *
  * @author ZhouNing
  **/
-public class RpcMqttCall {
+public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
-    private CompletableFuture<RpcMqttRes> callFuture;
+    private static final Map<Long, RpcMqttCall> CALLS = new ConcurrentHashMap<>();
 
-    public RpcMqttCall(CompletableFuture<RpcMqttRes> callFuture) {
-        this.callFuture = callFuture;
+    private final int timeout;
+
+    private final long reqId;
+
+    public int getTimeout() {
+        return timeout;
     }
 
-    public CompletableFuture<RpcMqttRes> getCallFuture() {
-        return callFuture;
+    public long getReqId() {
+        return reqId;
     }
 
-    public RpcMqttRes awaitInSeconds(int timeout) throws ExecutionException, InterruptedException, TimeoutException {
-        return callFuture.get(timeout, TimeUnit.SECONDS);
+    private RpcMqttCall(int timeout, long reqId) {
+        this.timeout = timeout;
+        this.reqId = reqId;
+        CALLS.put(reqId, this);
     }
 
+    public static RpcMqttCall newRpcMqttCall(RpcMqttReq rpcMqttReq) {
+        RpcMqttCall result = new RpcMqttCall(rpcMqttReq.getTimeout(), rpcMqttReq.getReqId());
+        Constants.hashedWheelTimer.newTimeout(new TimeoutCheck(rpcMqttReq.getReqId()), rpcMqttReq.getTimeout(), TimeUnit.MILLISECONDS);
+        return result;
+    }
+
+    public static RpcMqttCall getFuture(long id) {
+        return CALLS.get(id);
+    }
+
+
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        throw new IllegalStateException("not support");
+    }
+
+    private static class TimeoutCheck implements TimerTask {
+
+        private final Long requestID;
+
+        TimeoutCheck(Long requestID) {
+            this.requestID = requestID;
+        }
+
+        @Override
+        public void run(Timeout timeout) {
+            RpcMqttCall future = RpcMqttCall.getFuture(requestID);
+            if (future == null || future.isDone()) {
+                return;
+            }
+            notifyTimeout(future);
+        }
+
+        private void notifyTimeout(RpcMqttCall future) {
+            RpcMqttRes rpcMqttRes = new RpcMqttRes();
+            rpcMqttRes.setReqId(future.getReqId());
+            rpcMqttRes.setCode(Constants.RPC_MQTT_RES_REQUEST_TIMEOUT);
+            rpcMqttRes.setMsg("rpc reuest timeout");
+            future.complete(rpcMqttRes);
+            CALLS.remove(future.getReqId());
+        }
+    }
 }

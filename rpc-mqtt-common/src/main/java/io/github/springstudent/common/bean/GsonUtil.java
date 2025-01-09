@@ -31,6 +31,7 @@ public class GsonUtil {
     // weak reference of com.google.gson.Gson, prevent throw exception when init
     private static volatile Object gsonCache = null;
 
+
     public static <T> T toJavaObject(String json, Type type) {
         return getGson().fromJson(json, type);
     }
