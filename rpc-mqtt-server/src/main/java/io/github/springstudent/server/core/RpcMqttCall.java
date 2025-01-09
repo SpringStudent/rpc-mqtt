@@ -54,6 +54,11 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
         throw new IllegalStateException("not support");
     }
 
+    @Override
+    public boolean isCancelled() {
+        throw new IllegalStateException("not support");
+    }
+
     private static class TimeoutCheck implements TimerTask {
 
         private final Long requestID;
@@ -75,7 +80,7 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
             RpcMqttRes rpcMqttRes = new RpcMqttRes();
             rpcMqttRes.setReqId(future.getReqId());
             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_REQUEST_TIMEOUT);
-            rpcMqttRes.setMsg("rpc reuest timeout");
+            rpcMqttRes.setMsg("rpc call reuest timeout");
             future.complete(rpcMqttRes);
             CALLS.remove(future.getReqId());
         }
