@@ -23,9 +23,14 @@ public class RpcMqttInvokeTest2 {
         rpcMqttReq.setServiceName("MyExportService");
         rpcMqttReq.setMethodName("echo");
         rpcMqttReq.addArg("ddd");
-        rpcMqttReq.setTimeout(2000);
         RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
         RpcMqttRes rpcMqttRes = rpcMqttCall.get();
         System.out.println(rpcMqttRes);
+        RpcMqttReq rpcMqttReq2 = new RpcMqttReq();
+        rpcMqttReq2.setServiceName("MyExportService");
+        rpcMqttReq2.setMethodName("timeout");
+        RpcMqttCall rpcMqttCall2 = rpcMqttInvoker.call(rpcMqttReq2);
+        RpcMqttRes rpcMqttRes2 = rpcMqttCall2.get();
+        System.out.println(rpcMqttRes2);
     }
 }
