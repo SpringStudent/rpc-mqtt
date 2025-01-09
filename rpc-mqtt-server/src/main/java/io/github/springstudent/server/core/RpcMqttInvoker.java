@@ -90,8 +90,8 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
     @Override
     public void destroy() throws MqttException {
-        super.destroy();
         RpcMqttCall.destroy();
+        super.destroy();
     }
 
     @Override
