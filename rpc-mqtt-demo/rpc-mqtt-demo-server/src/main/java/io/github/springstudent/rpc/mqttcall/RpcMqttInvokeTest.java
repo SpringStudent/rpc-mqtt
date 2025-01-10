@@ -1,6 +1,5 @@
 package io.github.springstudent.rpc.mqttcall;
 
-import io.github.springstudent.common.bean.GsonUtil;
 import io.github.springstudent.common.bean.RpcMqttConfig;
 import io.github.springstudent.common.bean.RpcMqttReq;
 import io.github.springstudent.common.bean.RpcMqttRes;
@@ -27,7 +26,7 @@ public class RpcMqttInvokeTest {
         rpcMqttInvoker.start(rpcMqttConfig);
         //广播调用
         System.out.println("=====broadcast invoke start");
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             RpcMqttReq rpcMqttReq = new RpcMqttReq();
             rpcMqttReq.setServiceName("ExportService");
             rpcMqttReq.setMethodName("sayHello");
@@ -37,6 +36,7 @@ public class RpcMqttInvokeTest {
         }
         System.out.println("=====broadcast invoke end");
         //随机一台机器调用
+        System.out.println("=====random invoke start");
         RpcMqttReq rpcMqttReq2 = new RpcMqttReq();
         rpcMqttReq2.setServiceName("ExportService");
         rpcMqttReq2.setMethodName("sayHello");
@@ -44,8 +44,9 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall2 = rpcMqttInvoker.call(rpcMqttReq2);
         RpcMqttRes rpcMqttRes2 = rpcMqttCall2.get();
         System.out.println(rpcMqttRes2);
-
+        System.out.println("=====random invoke end");
         //根据clientId指定一台机器调用
+        System.out.println("=====choose invoke start");
         for (int i = 0; i < 10; i++) {
             RpcMqttReq rpcMqttReq3 = new RpcMqttReq();
             rpcMqttReq3.setServiceName("ExportService");
@@ -56,7 +57,8 @@ public class RpcMqttInvokeTest {
             RpcMqttRes rpcMqttRes3 = rpcMqttCall3.get();
             System.out.println(rpcMqttRes3);
         }
-
+        System.out.println("=====choose invoke end");
+        System.out.println("=====unexport invoke start");
         RpcMqttReq rpcMqttReq4 = new RpcMqttReq();
         rpcMqttReq4.setServiceName("UnExportService");
         rpcMqttReq4.setMethodName("sayHello");
@@ -64,7 +66,9 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall4 = rpcMqttInvoker.call(rpcMqttReq4);
         RpcMqttRes rpcMqttRes4 = rpcMqttCall4.get();
         System.out.println(rpcMqttRes4);
+        System.out.println("=====unexport invoke end");
         //调用有返回值的方法
+        System.out.println("=====hasResonse invoke start");
         RpcMqttReq rpcMqttReq5 = new RpcMqttReq();
         rpcMqttReq5.setServiceName("ExportService");
         rpcMqttReq5.setMethodName("exportBeans");
@@ -73,7 +77,9 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall5 = rpcMqttInvoker.call(rpcMqttReq5);
         RpcMqttRes rpcMqttRes5 = rpcMqttCall5.get();
         System.out.println(rpcMqttRes5);
+        System.out.println("=====hasResonse invoke end");
         //调用既有返回值又有参数的方法
+        System.out.println("=====has paramAndResponse invoke start");
         RpcMqttReq rpcMqttReq6 = new RpcMqttReq();
         rpcMqttReq6.setServiceName("ExportService");
         rpcMqttReq6.setMethodName("export");
@@ -85,7 +91,9 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall6 = rpcMqttInvoker.call(rpcMqttReq6);
         RpcMqttRes rpcMqttRes6 = rpcMqttCall6.get();
         System.out.println(rpcMqttRes6);
+        System.out.println("=====has paramAndResponse invoke end");
         //调用重载方法
+        System.out.println("=====overwrite invoke start");
         RpcMqttReq rpcMqttReq7 = new RpcMqttReq();
         rpcMqttReq7.setServiceName("ExportService");
         rpcMqttReq7.setMethodName("export");
@@ -95,6 +103,29 @@ public class RpcMqttInvokeTest {
         RpcMqttCall rpcMqttCall7 = rpcMqttInvoker.call(rpcMqttReq7);
         RpcMqttRes rpcMqttRes7 = rpcMqttCall7.get();
         System.out.println(rpcMqttRes7);
-        System.in.read();
+        System.out.println("=====overwrite invoke end");
+        //调用超时方法
+        System.out.println("=====timeout invoke start");
+        RpcMqttReq rpcMqttReq8 = new RpcMqttReq();
+        rpcMqttReq8.setServiceName("ExportService");
+        rpcMqttReq8.setMethodName("timeout");
+        rpcMqttReq8.setBroadcastInvoke(false);
+        rpcMqttReq8.setClientId("service_client_111");
+        RpcMqttCall rpcMqttCall8 = rpcMqttInvoker.call(rpcMqttReq8);
+        RpcMqttRes rpcMqttRes8 = rpcMqttCall8.get();
+        System.out.println(rpcMqttRes8);
+        System.out.println("=====timeout invoke end");
+        //调用超时方法
+        System.out.println("=====timeout invoke could not happen start");
+        RpcMqttReq rpcMqttReq9 = new RpcMqttReq();
+        rpcMqttReq9.setServiceName("ExportService");
+        rpcMqttReq9.setMethodName("timeout");
+        rpcMqttReq9.setBroadcastInvoke(false);
+        rpcMqttReq9.setClientId("service_client_111");
+        rpcMqttReq9.setTimeout(5000);
+        RpcMqttCall rpcMqttCall9 = rpcMqttInvoker.call(rpcMqttReq9);
+        RpcMqttRes rpcMqttRes9 = rpcMqttCall9.get();
+        System.out.println(rpcMqttRes9);
+        System.out.println("=====timeout invoke could not happen end");
     }
 }

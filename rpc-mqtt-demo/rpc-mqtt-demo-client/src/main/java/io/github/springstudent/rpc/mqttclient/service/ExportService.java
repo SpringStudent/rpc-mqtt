@@ -15,4 +15,6 @@ public interface ExportService {
     ExportBean export(ExportParam exportParam, String name, Date time);
 
     String export(String export);
+
+    void timeout();
 }

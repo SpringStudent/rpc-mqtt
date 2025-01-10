@@ -99,7 +99,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                 rpcMqttRes.setClientId(RpcMqttRemote.this.clientId);
                 if (object == null) {
                     rpcMqttRes.setCode(Constants.RPC_MQTT_RES_SERVICE_NOT_FOUND);
-                    rpcMqttRes.setMsg("rpc can not find serviceName=" + rpcMqttReq.getServiceName());
+                    rpcMqttRes.setMsg("rpc can not find serviceName = " + rpcMqttReq.getServiceName());
                 } else {
                     Class<?> clss = exportClassMap.get(rpcMqttReq.getServiceName());
                     Method[] methods = clss.getMethods();
@@ -130,13 +130,13 @@ public class RpcMqttRemote extends RpcMqttClient {
                     }
                     if (method == null) {
                         rpcMqttRes.setCode(Constants.RPC_MQTT_RES_METHOD_NOT_FOUND);
-                        rpcMqttRes.setMsg("rpc can not find methodName=" + rpcMqttReq.getServiceName() + "." + rpcMqttReq.getMethodName());
+                        rpcMqttRes.setMsg("rpc can not find methodName = " + rpcMqttReq.getServiceName() + "." + rpcMqttReq.getMethodName());
                     } else {
                         rpcMqttRes.setCode(Constants.RPC_MQTT_RES_OK);
                         try {
                             rpcMqttRes.setResult(GsonUtil.toJson(method.invoke(object, args.toArray())));
                         } catch (Exception ex) {
-                            rpcMqttRes.setMsg("rpc invoke error" + ex.getMessage());
+                            rpcMqttRes.setMsg("rpc invoke error " + ExceptionUtil.getExceptionMessage(ex));
                             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_INVOKE_ERROR);
                         }
                     }
@@ -144,7 +144,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                 RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
             } catch (Exception e) {
                 //couldn't happen
-                logger.error("rpc handle receive msg={} error", payload, e);
+                logger.error("rpc handle receive msg = {} error", payload, e);
             }
         });
 

@@ -6,6 +6,8 @@ import io.github.springstudent.common.bean.RpcMqttRes;
 import io.github.springstudent.server.core.RpcMqttCall;
 import io.github.springstudent.server.core.RpcMqttInvoker;
 
+import java.util.concurrent.TimeUnit;
+
 public class RpcMqttInvokeTest2 {
 
     public static void main(String[] args) throws Exception {
@@ -19,6 +21,7 @@ public class RpcMqttInvokeTest2 {
         rpcMqttConfig.setMqttConnectionTimeout(30);
         rpcMqttInvoker.start(rpcMqttConfig);
         //广播调用
+        System.out.println("====invoke start");
         RpcMqttReq rpcMqttReq = new RpcMqttReq();
         rpcMqttReq.setServiceName("MyExportService");
         rpcMqttReq.setMethodName("echo");
@@ -26,11 +29,32 @@ public class RpcMqttInvokeTest2 {
         RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
         RpcMqttRes rpcMqttRes = rpcMqttCall.get();
         System.out.println(rpcMqttRes);
+        System.out.println("====invoke end");
+        //异步获取结果
         RpcMqttReq rpcMqttReq2 = new RpcMqttReq();
         rpcMqttReq2.setServiceName("MyExportService");
         rpcMqttReq2.setMethodName("timeout");
-        RpcMqttCall rpcMqttCall2 = rpcMqttInvoker.call(rpcMqttReq2);
-        RpcMqttRes rpcMqttRes2 = rpcMqttCall2.get();
-        System.out.println(rpcMqttRes2);
+        rpcMqttInvoker.call(rpcMqttReq2).whenComplete((rpcMqttRes1, throwable) -> {
+            System.out.println("===timeout invoke finish" + rpcMqttRes1);
+        });
+        //超时调用
+        System.out.println("====invoke get timeout start");
+        RpcMqttReq rpcMqttReq3 = new RpcMqttReq();
+        rpcMqttReq3.setServiceName("MyExportService");
+        rpcMqttReq3.setMethodName("timeout");
+        RpcMqttCall rpcMqttCall3 = rpcMqttInvoker.call(rpcMqttReq3);
+        try {
+            rpcMqttCall3.get(2, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            System.out.println("====invoke get timeout end");
+        }
+        //调用方法异常
+        System.out.println("====invoke throw exception start");
+        RpcMqttReq rpcMqttReq4 = new RpcMqttReq();
+        rpcMqttReq4.setServiceName("MyExportService");
+        rpcMqttReq4.setMethodName("throwE");
+        RpcMqttCall rpcMqttCall4 = rpcMqttInvoker.call(rpcMqttReq4);
+        System.out.println(rpcMqttCall4.get());
+        System.out.println("====invoke throw exception end");
     }
 }

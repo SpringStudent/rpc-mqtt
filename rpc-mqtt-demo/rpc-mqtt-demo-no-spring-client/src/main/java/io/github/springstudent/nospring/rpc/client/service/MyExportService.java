@@ -14,4 +14,8 @@ public class MyExportService {
         }
         return "hello";
     }
+
+    public void throwE() {
+        System.out.println(1 / 0);
+    }
 }

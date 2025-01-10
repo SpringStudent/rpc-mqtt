@@ -42,4 +42,14 @@ public class ExportServiceImpl implements ExportService {
     public String export(String export) {
         return export;
     }
+
+    @Override
+    public void timeout() {
+        try {
+            Thread.sleep(3100);
+        } catch (InterruptedException e) {
+
+        }
+        System.out.println("client2 timeout");
+    }
 }
