@@ -28,9 +28,9 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
 
     public void start(RpcMqttConfig rpcMqttConfig) throws MqttException, InterruptedException {
-        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums() > 0 ? rpcMqttConfig.getRecieveExecutorNums() : 20, new NamedThreadFactory("rpc-mqtt-invoker-"));
         super.mqttConfig(rpcMqttConfig);
         super.start();
+        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
         initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS);
     }
 

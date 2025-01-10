@@ -45,7 +45,7 @@ public class RpcMqttRemote extends RpcMqttClient {
         }
         super.mqttConfig(rpcMqttConfig);
         super.start();
-        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums() > 0 ? rpcMqttConfig.getRecieveExecutorNums() : 20, new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
+        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
         this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("rpc-mqtt-remote-heartbeart-"));
         this.schedulerFuture = scheduler.scheduleWithFixedDelay(() -> {
             try {

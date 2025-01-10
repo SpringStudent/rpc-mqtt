@@ -24,6 +24,7 @@ public class Constants {
     public static final byte RPC_MQTT_RES_REQUEST_TIMEOUT = 0x04;
     public static int RPC_MQTT_CONNECT_TIMEOUT = 30;
     public static int RPC_MQTT_KEEPALIVE_INTERNAL_TIMEOUT = 60;
+    public static int RPC_MQTT_RECIEVE_EXECUTOR_NUMS = 20;
     public static HashedWheelTimer hashedWheelTimer = new HashedWheelTimer(new NamedThreadFactory("rpcMqtt", true), 100, TimeUnit.MILLISECONDS, 128);
 
     public static MqttMessage heartBeat(String clientId) {
