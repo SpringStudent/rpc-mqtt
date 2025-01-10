@@ -44,9 +44,10 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
         return result;
     }
 
-    public static RpcMqttCall getFuture(long id) {
-        return CALLS.get(id);
+    public static RpcMqttCall removeFuture(long id) {
+        return CALLS.remove(id);
     }
+
 
     public static void destroy() {
         CALLS.clear();
@@ -72,7 +73,7 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
         @Override
         public void run(Timeout timeout) {
-            RpcMqttCall future = RpcMqttCall.getFuture(requestID);
+            RpcMqttCall future = RpcMqttCall.removeFuture(requestID);
             if (future == null || future.isDone()) {
                 return;
             }
@@ -85,7 +86,6 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_REQUEST_TIMEOUT);
             rpcMqttRes.setMsg("rpc call reuest timeout");
             future.complete(rpcMqttRes);
-            CALLS.remove(future.getReqId());
         }
     }
 }

@@ -106,7 +106,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
                     //response payload
                     RpcMqttRes rpcMqttRes = GsonUtil.toJavaObject(payload, RpcMqttRes.class);
                     RpcRemoteOnlineManager.heartBeat(rpcMqttRes.getClientId());
-                    RpcMqttCall call = RpcMqttCall.getFuture(rpcMqttRes.getReqId());
+                    RpcMqttCall call = RpcMqttCall.removeFuture(rpcMqttRes.getReqId());
                     if (call != null) {
                         call.complete(rpcMqttRes);
                     }
