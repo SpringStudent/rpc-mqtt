@@ -8,7 +8,7 @@ import io.github.springstudent.server.core.RpcMqttInvoker;
 
 import java.util.concurrent.TimeUnit;
 
-public class RpcMqttInvokeNoSpring {
+public class RpcMqttInvokeTestNoSpring {
 
     public static void main(String[] args) throws Exception {
         RpcMqttInvoker rpcMqttInvoker = new RpcMqttInvoker();
