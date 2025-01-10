@@ -1,23 +1,31 @@
-#### 基于Mqtt协议的rpc框架
+[English](README.md) | [中文](README_zh.md)
 
-* 无需注册中心
-* 基于json传输报文
-* 支持广播调用和单个调用
-* 消费方可以不依赖提供方jar
-* 消费方和提供方网络可隔离
-* 提供方不要求必须实现接口
+#### RPC Framework Based on the MQTT Protocol
 
-#### 使用场景说明
+* No need for a registration center
+* Uses JSON for message transmission
+* Supports both broadcast and single calls
+* Consumers do not need to rely on the provider's JAR
+* Consumer and provider networks can be isolated
+* Providers are not required to implement interfaces
 
-一般用于指令透传(物联网领域)，一个局域网内的服务想访问另外一个局域网内的客户端程序(两者网络不通也无法通过dubbo进行rpc)，此时客户端程序无公网IP，无法通过http协议发送指令，rpc-mqtt便可用于此场景。
+#### Use Case Explanation
 
-#### 使用指导
+This framework is typically used for command transmission (in the IoT field). It allows a service in one local area
+network (LAN) to access a client program in another LAN (where the two networks cannot communicate directly and cannot
+use Dubbo for RPC). In this case, the client program does not have a public IP and cannot send commands via HTTP
+protocol. RPC-MQTT can be used for this scenario.
 
-首先你需要一个mqtt broker, 代码可参考rpc-mqtt-demo;
+#### Usage Guide
 
-#### 其他想法
+First, you need an MQTT broker. The code can refer to rpc-mqtt-demo.
 
-可以基于mqtt broker的发布-订阅模式，做服务治理的工作；
+#### Other Ideas
 
-* 比如消费方订阅管理配置的topic比如'rpc/mqtt/req/config',可以往该topic发送指定某个服务下线的payload,消费方接受到服务下线payload后，将不在调用该服务。
-* 在比如还可以在该topic动态发布服务提供方的权重的payload，服务消费方接受到payload,解析得到服务提供方的权重，调用服务的时候根据权重做调用。
+It is possible to use the publish-subscribe model of the MQTT broker to perform service governance.
+
+For example, the consumer can subscribe to a management configuration topic, such as rpc/mqtt/req/config. A payload
+indicating that a specific service is offline can be sent to this topic. After receiving the service offline payload,
+the consumer will no longer call that service. Additionally, the service provider’s weight can be dynamically published
+in the same topic. When the consumer receives the payload, it can parse the weight of the service provider and make
+calls accordingly based on the weight.
