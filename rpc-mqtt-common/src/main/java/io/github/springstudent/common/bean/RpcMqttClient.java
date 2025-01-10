@@ -1,12 +1,7 @@
 package io.github.springstudent.common.bean;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 import java.util.concurrent.ExecutorService;
@@ -62,7 +57,13 @@ public class RpcMqttClient implements MqttCallbackExtended {
     }
 
     public void subscribe(String[] topics) throws MqttException {
-        mqttClient.subscribe(topics, new int[]{QosType.QOS_EXACTLY_ONCE.type(), QosType.QOS_EXACTLY_ONCE.type()});
+        if (topics.length > 0) {
+            int[] qos = new int[topics.length];
+            for (int i = 0; i < topics.length; i++) {
+                qos[i] = QosType.QOS_EXACTLY_ONCE.type();
+            }
+            mqttClient.subscribe(topics, qos);
+        }
     }
 
     public void destroy() throws MqttException {
