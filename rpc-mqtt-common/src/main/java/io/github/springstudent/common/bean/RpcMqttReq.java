@@ -1,5 +1,6 @@
 package io.github.springstudent.common.bean;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -62,6 +63,10 @@ public class RpcMqttReq extends RpcMqttPayLoad {
         this.methodName = methodName;
     }
 
+    public void setMethodName(Method method) {
+        this.methodName = method.getName();
+    }
+
     public List<String> getArgs() {
         return args;
     }
@@ -92,4 +97,5 @@ public class RpcMqttReq extends RpcMqttPayLoad {
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
+
 }
