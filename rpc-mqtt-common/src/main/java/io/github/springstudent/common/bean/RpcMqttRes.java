@@ -1,5 +1,7 @@
 package io.github.springstudent.common.bean;
 
+import java.lang.reflect.Type;
+
 /**
  * 响应请求
  *
@@ -35,6 +37,14 @@ public class RpcMqttRes extends RpcMqttPayLoad {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public <T> T toJavaObject(Type type) {
+        if (result != null) {
+            return GsonUtil.toJavaObject(result, type);
+        } else {
+            return null;
+        }
     }
 
     @Override
