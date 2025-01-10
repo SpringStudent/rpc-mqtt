@@ -100,7 +100,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
         if (rpcMqttConfig.getMqttKeepAliveInterval() == null) {
             rpcMqttConfig.setMqttKeepAliveInterval(Constants.RPC_MQTT_KEEPALIVE_INTERNAL_TIMEOUT);
         }
-        if (rpcMqttConfig.getRecieveExecutorNums() <= 0) {
+        if (rpcMqttConfig.getRecieveExecutorNums() == null) {
             rpcMqttConfig.setRecieveExecutorNums(Constants.RPC_MQTT_RECIEVE_EXECUTOR_NUMS);
         }
     }

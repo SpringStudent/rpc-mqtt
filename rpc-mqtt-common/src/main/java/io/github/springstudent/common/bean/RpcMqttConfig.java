@@ -21,7 +21,7 @@ public class RpcMqttConfig {
 
     private String mqttFilePersistDir;
 
-    private int recieveExecutorNums;
+    private Integer recieveExecutorNums;
 
     public String getMqttBrokerAddress() {
         return mqttBrokerAddress;
@@ -79,11 +79,11 @@ public class RpcMqttConfig {
         this.mqttFilePersistDir = mqttFilePersistDir;
     }
 
-    public int getRecieveExecutorNums() {
+    public Integer getRecieveExecutorNums() {
         return recieveExecutorNums;
     }
 
-    public void setRecieveExecutorNums(int recieveExecutorNums) {
+    public void setRecieveExecutorNums(Integer recieveExecutorNums) {
         this.recieveExecutorNums = recieveExecutorNums;
     }
 }
