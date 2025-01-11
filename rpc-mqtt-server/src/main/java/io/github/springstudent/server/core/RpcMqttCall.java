@@ -40,7 +40,7 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
     public static RpcMqttCall newRpcMqttCall(RpcMqttReq rpcMqttReq) {
         RpcMqttCall result = new RpcMqttCall(rpcMqttReq.getTimeout(), rpcMqttReq.getReqId());
-        Constants.hashedWheelTimer.newTimeout(new TimeoutCheck(rpcMqttReq.getReqId()), rpcMqttReq.getTimeout(), TimeUnit.MILLISECONDS);
+        Constants.HASHED_WHEEL_TIMER.newTimeout(new TimeoutCheck(rpcMqttReq.getReqId()), rpcMqttReq.getTimeout(), TimeUnit.MILLISECONDS);
         return result;
     }
 
