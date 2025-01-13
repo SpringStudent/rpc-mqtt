@@ -75,8 +75,8 @@ public class RpcMqttRemote extends RpcMqttClient {
     @Override
     public void connectComplete(boolean reconnect, String serverURI) {
         try {
-            connectFlag = true;
             super.subscribe(Constants.RPC_MQTT_REQ_TOPIC);
+            connectFlag = true;
         } catch (MqttException e) {
             logger.error("subscribe error", e);
 
