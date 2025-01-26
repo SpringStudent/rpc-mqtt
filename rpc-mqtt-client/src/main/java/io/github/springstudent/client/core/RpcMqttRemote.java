@@ -44,8 +44,7 @@ public class RpcMqttRemote extends RpcMqttClient {
             exportObjectMap.put(clss.getSimpleName(), rpcExportFactory.getExport(clss));
             exportClassMap.put(clss.getSimpleName(), clss);
         }
-        super.mqttConfig(rpcMqttConfig);
-        super.start();
+        super.connect(rpcMqttConfig);
         this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
         this.heartBeatTimerTask = new ScheduleTimerTask(Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000) {
             @Override

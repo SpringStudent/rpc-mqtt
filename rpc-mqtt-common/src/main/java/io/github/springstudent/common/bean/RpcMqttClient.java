@@ -22,7 +22,8 @@ public class RpcMqttClient implements MqttCallbackExtended {
 
     protected String clientId;
 
-    public void start() throws MqttException {
+    public void connect(RpcMqttConfig rpcMqttConfig) throws MqttException {
+        mqttConfig(rpcMqttConfig);
         MqttDefaultFilePersistence mqttDefaultFilePersistence = null;
         if (StringUtils.isNotEmpty(rpcMqttConfig.getMqttFilePersistDir())) {
             mqttDefaultFilePersistence = new MqttDefaultFilePersistence(rpcMqttConfig.getMqttFilePersistDir());
