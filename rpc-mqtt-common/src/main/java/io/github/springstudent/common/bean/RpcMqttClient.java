@@ -88,7 +88,6 @@ public class RpcMqttClient implements MqttCallbackExtended {
     }
 
     public void mqttConfig(RpcMqttConfig rpcMqttConfig) {
-        this.rpcMqttConfig = rpcMqttConfig;
         if (StringUtils.isEmpty(rpcMqttConfig.getMqttBrokerAddress())) {
             throw new IllegalArgumentException("mqtt broker address cannot be null");
         }
@@ -104,6 +103,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
         if (rpcMqttConfig.getRecieveExecutorNums() == null) {
             rpcMqttConfig.setRecieveExecutorNums(Constants.RPC_MQTT_RECIEVE_EXECUTOR_NUMS);
         }
+        this.rpcMqttConfig = rpcMqttConfig;
     }
 
     @Override
