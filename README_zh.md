@@ -23,3 +23,4 @@
 
 * 比如消费方订阅管理配置的topic比如'rpc/mqtt/req/config',可以往该topic发送指定某个服务下线的payload,消费方接受到服务下线payload后，将不在调用该服务。
 * 在比如还可以在该topic动态发布服务提供方的权重的payload，服务消费方接受到payload,解析得到服务提供方的权重，调用服务的时候根据权重做调用。
+* 另外还可以根据服务提供方的clientId扩展做路由策略，比如在调用时配置mvel表达式，当clientId满足mvel表达式指定条件时才会进行调用

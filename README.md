@@ -28,4 +28,6 @@ For example, the consumer can subscribe to a management configuration topic, suc
 indicating that a specific service is offline can be sent to this topic. After receiving the service offline payload,
 the consumer will no longer call that service. Additionally, the service provider’s weight can be dynamically published
 in the same topic. When the consumer receives the payload, it can parse the weight of the service provider and make
-calls accordingly based on the weight.
+calls accordingly based on the weight. Additionally, routing strategies can be extended based on the service provider's clientId, 
+such as configuring an MVEL expression during the call. The call will only be made if the clientId meets the conditions specified 
+by the MVEL expression.
