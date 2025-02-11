@@ -84,7 +84,7 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
             RpcMqttRes rpcMqttRes = new RpcMqttRes();
             rpcMqttRes.setReqId(future.getReqId());
             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_REQUEST_TIMEOUT);
-            rpcMqttRes.setMsg("rpc call reuest timeout");
+            rpcMqttRes.setMsg("rpc request timeout");
             future.complete(rpcMqttRes);
         }
     }
