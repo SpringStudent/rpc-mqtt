@@ -101,7 +101,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
                 //heartBeat payload
                 if (topic.equals(Constants.RPC_MQTT_HEARTBEAT_TOPIC)) {
                     RpcRemoteOnlineManager.heartBeat(payload);
-                } else if (topic.startsWith(Constants.RPC_MQTT_RES_TOPIC)) {
+                } else if (topic.equals(Constants.RPC_MQTT_RES_TOPIC)) {
                     //response payload
                     RpcMqttRes rpcMqttRes = GsonUtil.toJavaObject(payload, RpcMqttRes.class);
                     RpcRemoteOnlineManager.heartBeat(rpcMqttRes.getClientId());
