@@ -17,7 +17,7 @@ dubbo focuses on calls between services within an intranet, while rpc-mqtt empha
 
 When a service within one local area network (LAN) needs to access a client program in another LAN, if the two networks
 cannot directly communicate, RPC calls via Dubbo become unfeasible. Additionally, if the client program lacks a public
-IP address, sending commands over the HTTP protocol is also impossible. In such scenarios, a publicly deployed MQTT
+IP address, sending http request is also impossible. In such scenarios, a publicly deployed MQTT
 Broker can be utilized to enable cross-network program invocation through rpc-mqtt.
 
 #### Usage Guide
