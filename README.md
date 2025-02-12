@@ -9,13 +9,16 @@
 * Consumer and provider networks can be isolated
 * Providers are not required to implement interfaces
 
+#### Differences from RPC frameworks such as dubbo, grpc, motan, etc.
+
+dubbo focuses on calls between services within an intranet, while rpc-mqtt emphasizes calls between services across different networks.
+
 #### Use Case Explanation
 
 When a service within one local area network (LAN) needs to access a client program in another LAN, if the two networks
 cannot directly communicate, RPC calls via Dubbo become unfeasible. Additionally, if the client program lacks a public
 IP address, sending commands over the HTTP protocol is also impossible. In such scenarios, a publicly deployed MQTT
-Broker can be utilized to enable cross-network program invocation through rpc-mqtt.Dubbo focuses on inter-service 
-communication, while RPC-MQTT emphasizes communication between services across networks.
+Broker can be utilized to enable cross-network program invocation through rpc-mqtt.
 
 #### Usage Guide
 
