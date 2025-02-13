@@ -11,7 +11,7 @@
 
 #### 与dubbo、grpc、motan、等rpc框架的区别
 
-dubbo侧重于内网跨服务之间调用，rpc-mqtt则侧重于不同网络服务之间的调用。另外dubbo这一类的rpc框架是提供者与被提供者之间建立tcp长连接，并且可以通过连接复用支持高并发，rpc-mqtt底层传输数据依赖mqtt client与broker建立的连接无法进行连接复用，对于高并发
+dubbo侧重于内网跨服务之间调用，rpc-mqtt则侧重于不同网络服务之间的调用。另外dubbo这一类的rpc框架是提供者与消费者之间建立tcp长连接，并且可以通过连接复用支持高并发，rpc-mqtt底层传输数据依赖mqtt client与broker建立的连接无法进行连接复用，对于高并发
 服务之间调用慎用。
 
 #### 使用场景说明
