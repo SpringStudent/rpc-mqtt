@@ -12,9 +12,6 @@
 #### Differences from RPC frameworks such as dubbo, grpc, motan, etc.
 
 Dubbo focuses on cross-service calls within an intranet, while RPC-MQTT emphasizes calls between services across different networks.
-Additionally, RPC frameworks like Dubbo establish a TCP long connection between the provider and the consumer, and they support high concurrency through connection reuse.
-In contrast, RPC-MQTT relies on the connection established between the MQTT client and the broker for data transmission, which does not support connection reuse. Therefore,
-RPC-MQTT should be used with caution for high-concurrency service calls.
 
 #### Use Case Explanation
 
