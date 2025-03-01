@@ -1,7 +1,6 @@
 package io.github.springstudent.client.core;
 
 import io.github.springstudent.common.bean.*;
-import io.github.springstudent.common.timer.ScheduleTimerTask;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
@@ -13,9 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * mqtt远端服务
@@ -29,7 +26,9 @@ public class RpcMqttRemote extends RpcMqttClient {
 
     private Map<String, Class<?>> exportClassMap = new ConcurrentHashMap<>();
 
-    private ScheduleTimerTask heartBeatTimerTask;
+    private ScheduledExecutorService scheduler;
+
+    private ScheduledFuture schedulerFuture;
 
     private boolean connectFlag;
 
@@ -46,27 +45,24 @@ public class RpcMqttRemote extends RpcMqttClient {
         }
         super.connect(rpcMqttConfig);
         this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
-        this.heartBeatTimerTask = new ScheduleTimerTask(Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000) {
-            @Override
-            protected void schedule() {
-                try {
-                    if (connectFlag) {
-                        RpcMqttRemote.super.publish(Constants.RPC_MQTT_HEARTBEAT_TOPIC, Constants.heartBeat(RpcMqttRemote.this.clientId));
-                    } else {
-                        logger.info("publish ignore,mqtt client hasn't connected");
-                    }
-                } catch (Exception e) {
-                    logger.error("publish heartbeat error", e);
+        this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("rpc-mqtt-remote-heartbeart-"));
+        this.schedulerFuture = scheduler.scheduleWithFixedDelay(() -> {
+            try {
+                if (connectFlag) {
+                    RpcMqttRemote.super.publish(Constants.RPC_MQTT_HEARTBEAT_TOPIC, Constants.heartBeat(RpcMqttRemote.this.clientId));
+                } else {
+                    logger.info("publish ignore,mqtt client hasn't connected");
                 }
+            } catch (Exception e) {
+                logger.error("publish heartbeat error", e);
             }
-        };
-        Constants.HASHED_WHEEL_TIMER.newTimeout(heartBeatTimerTask, Constants.RPC_MQTT_HEARTBEAT_TIMEOUT, TimeUnit.SECONDS);
+        }, 1, Constants.RPC_MQTT_HEARTBEAT_TIMEOUT, TimeUnit.SECONDS);
     }
 
     @Override
     public void destroy() throws MqttException {
-        if (heartBeatTimerTask != null) {
-            heartBeatTimerTask.cancel();
+        if (schedulerFuture != null) {
+            schedulerFuture.cancel(true);
         }
         super.destroy();
     }
