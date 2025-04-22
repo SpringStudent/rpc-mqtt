@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  **/
 public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
-    private static final Map<Long, RpcMqttCall> CALLS = new ConcurrentHashMap<>();
+    private static final Map<Long, RpcMqttCall> CALLS = new ConcurrentHashMap<>(128);
 
     private final int timeout;
 
