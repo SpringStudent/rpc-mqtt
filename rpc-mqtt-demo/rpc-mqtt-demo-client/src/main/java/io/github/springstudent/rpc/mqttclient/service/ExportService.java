@@ -5,6 +5,7 @@ import io.github.springstudent.rpc.mqttclient.bean.ExportParam;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ExportService {
 
@@ -17,4 +18,8 @@ public interface ExportService {
     String export(String export);
 
     void timeout();
+
+    void complex(List<String> strs, Map<String,Object> map);
+
+    void complex(List<String> strs, Date date);
 }

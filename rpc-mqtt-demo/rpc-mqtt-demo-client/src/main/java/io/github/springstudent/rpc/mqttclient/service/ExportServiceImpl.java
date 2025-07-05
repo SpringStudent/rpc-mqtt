@@ -4,10 +4,7 @@ import io.github.springstudent.rpc.mqttclient.bean.ExportBean;
 import io.github.springstudent.rpc.mqttclient.bean.ExportParam;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ExportServiceImpl implements ExportService {
@@ -51,5 +48,17 @@ public class ExportServiceImpl implements ExportService {
 
         }
         System.out.println("client1 timeout");
+    }
+
+    @Override
+    public void complex(List<String> strs, Map<String, Object> map) {
+        System.out.println(strs);
+        System.out.println(map);
+    }
+
+    @Override
+    public void complex(List<String> strs, Date date) {
+        System.out.println(strs);
+        System.out.println(date);
     }
 }

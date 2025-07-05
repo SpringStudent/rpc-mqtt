@@ -9,6 +9,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -127,5 +129,21 @@ public class RpcMqttInvokeTest {
         RpcMqttRes rpcMqttRes9 = rpcMqttCall9.get();
         System.out.println(rpcMqttRes9);
         System.out.println("=====timeout invoke could not happen end");
+        //调用复杂方法
+        System.out.println("=====complex invoke start");
+        RpcMqttReq rpcMqttReq10 = new RpcMqttReq();
+        rpcMqttReq10.setServiceName("ExportService");
+        rpcMqttReq10.setMethodName("complex");
+        rpcMqttReq10.setBroadcastInvoke(false);
+        rpcMqttReq10.setClientId("service_client_111");
+        rpcMqttReq10.addArg("[\"a\",\"b\",\"c\"]");
+        Map<String,Object> map = new HashMap<>();
+        map.put("a",1);
+        rpcMqttReq10.addArg(map);
+        rpcMqttReq10.setTimeout(5000);
+        RpcMqttCall rpcMqttCall10 = rpcMqttInvoker.call(rpcMqttReq10);
+        RpcMqttRes rpcMqttRes10 = rpcMqttCall10.get();
+        System.out.println(rpcMqttRes10);
+        System.out.println("=====complex invoke end");
     }
 }
