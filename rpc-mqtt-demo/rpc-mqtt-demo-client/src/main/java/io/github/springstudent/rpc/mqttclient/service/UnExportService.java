@@ -1,6 +1,6 @@
 package io.github.springstudent.rpc.mqttclient.service;
 
-public interface UnExportService {
+public interface  UnExportService {
 
     void sayHello();
 }

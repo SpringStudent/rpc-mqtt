@@ -42,7 +42,11 @@ public class GsonUtil {
     }
 
     public static String toJson(Object obj) {
-        return getGson().toJson(obj);
+        if(obj==null){
+            return null;
+        }else{
+            return getGson().toJson(obj);
+        }
     }
 
     private static Gson getGson() {
