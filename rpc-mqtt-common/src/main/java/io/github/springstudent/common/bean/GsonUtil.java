@@ -16,11 +16,11 @@
  */
 package io.github.springstudent.common.bean;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * json工具类
@@ -42,9 +42,9 @@ public class GsonUtil {
     }
 
     public static String toJson(Object obj) {
-        if(obj==null){
+        if (obj == null) {
             return null;
-        }else{
+        } else {
             return getGson().toJson(obj);
         }
     }
