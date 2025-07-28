@@ -68,19 +68,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
     }
 
     public void destroy() throws MqttException {
-        if (recieveExecutor != null) {
-            recieveExecutor.shutdown();
-            try {
-                if (!recieveExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
-                    recieveExecutor.shutdownNow();
-                    if (!recieveExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
-                    }
-                }
-            } catch (InterruptedException ie) {
-                recieveExecutor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
+        ThreadUtils.shutdownThreadPool(recieveExecutor);
         if (mqttClient.isConnected()) {
             mqttClient.disconnect();
             mqttClient.close();

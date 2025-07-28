@@ -64,6 +64,7 @@ public class RpcMqttRemote extends RpcMqttClient {
         if (schedulerFuture != null) {
             schedulerFuture.cancel(true);
         }
+        ThreadUtils.shutdownThreadPool(scheduler);
         super.destroy();
     }
 
