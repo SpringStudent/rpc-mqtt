@@ -1,6 +1,9 @@
 package io.github.springstudent.server.core;
 
 import io.github.springstudent.common.bean.*;
+import io.github.springstudent.common.filter.RpcMqttResult;
+import io.github.springstudent.common.filter.RpcMqttChain;
+import io.github.springstudent.common.filter.RpcMqttContext;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -8,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -22,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class RpcMqttInvoker extends RpcMqttClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcMqttInvoker.class);
-
     private long subscribeTime;
     private CountDownLatch initLatch = new CountDownLatch(1);
 
@@ -33,14 +36,14 @@ public class RpcMqttInvoker extends RpcMqttClient {
         initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS);
     }
 
-    public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws MqttException, InterruptedException {
+    public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws Exception {
         checkRpcMqttReq(rpcMqttReq);
         List<String> onlineRemotes = RpcRemoteOnlineManager.onlineRemotes();
         if (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
             if (System.currentTimeMillis() - subscribeTime <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
                 Thread.sleep(1000);
-                call(rpcMqttReq);
+                return call(rpcMqttReq);
             } else {
                 throw new IllegalStateException("call error,online remote size is zero");
             }
@@ -53,9 +56,13 @@ public class RpcMqttInvoker extends RpcMqttClient {
                 rpcMqttReq.setClientId(clientId);
             }
         }
-        RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(rpcMqttReq);
-        super.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(rpcMqttReq));
-        return rpcMqttCall;
+        RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
+            RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);
+            RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req));
+            System.out.println("1111");
+            return new RpcMqttResult(rpcMqttCall);
+        });
+        return (RpcMqttCall)(chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
     }
 
     private void checkRpcMqttReq(RpcMqttReq rpcMqttReq) {

@@ -2,6 +2,7 @@ package io.github.springstudent.rpc.mqttclient.core;
 
 import io.github.springstudent.client.core.RpcMqttRemote;
 import io.github.springstudent.common.bean.RpcMqttConfig;
+import io.github.springstudent.common.filter.RpcMqttFilter;
 import io.github.springstudent.rpc.mqttclient.service.ExportService;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,9 @@ public class RpcMqttClientExportConfig {
     @Resource
     private SpringExportFactory springExportFactory;
 
+    @Resource
+    private RpcMqttFilter rpcMqttFilter;
+
     @Bean
     public RpcMqttRemote rpcMqttClient() throws MqttException {
         RpcMqttRemote rpcMqttRemote = new RpcMqttRemote();
@@ -24,8 +28,8 @@ public class RpcMqttClientExportConfig {
         rpcMqttConfig.setMqttClientId("service_client_111");
         rpcMqttConfig.setMqttUsername("-1");
         rpcMqttConfig.setMqttPassword("15ead68628334b4d851df1badb8be508");
+        rpcMqttRemote.addFilter(rpcMqttFilter);
         rpcMqttRemote.start(rpcMqttConfig, Arrays.asList(ExportService.class), springExportFactory);
-
         return rpcMqttRemote;
     }
 }

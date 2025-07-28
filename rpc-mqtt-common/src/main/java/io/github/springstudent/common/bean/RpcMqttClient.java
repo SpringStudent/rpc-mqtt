@@ -1,9 +1,13 @@
 package io.github.springstudent.common.bean;
 
+import io.github.springstudent.common.filter.RpcMqttFilter;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +25,8 @@ public class RpcMqttClient implements MqttCallbackExtended {
     protected RpcMqttConfig rpcMqttConfig;
 
     protected String clientId;
+
+    protected List<RpcMqttFilter> filters = new ArrayList<>();
 
     public void connect(RpcMqttConfig rpcMqttConfig) throws MqttException {
         mqttConfig(rpcMqttConfig);
@@ -92,6 +98,16 @@ public class RpcMqttClient implements MqttCallbackExtended {
             rpcMqttConfig.setRecieveExecutorNums(Constants.RPC_MQTT_RECIEVE_EXECUTOR_NUMS);
         }
         this.rpcMqttConfig = rpcMqttConfig;
+    }
+
+    public void addFilter(RpcMqttFilter... add) {
+        if (add != null && add.length > 0) {
+            Arrays.stream(add).forEach(filter -> {
+                if (filter != null) {
+                    filters.add(filter);
+                }
+            });
+        }
     }
 
     @Override

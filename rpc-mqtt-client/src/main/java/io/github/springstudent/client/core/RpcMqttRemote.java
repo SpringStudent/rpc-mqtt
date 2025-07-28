@@ -1,6 +1,9 @@
 package io.github.springstudent.client.core;
 
 import io.github.springstudent.common.bean.*;
+import io.github.springstudent.common.filter.RpcMqttResult;
+import io.github.springstudent.common.filter.RpcMqttChain;
+import io.github.springstudent.common.filter.RpcMqttContext;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
@@ -93,55 +96,59 @@ public class RpcMqttRemote extends RpcMqttClient {
                 if (rpcMqttReq.getClientId() != null && !rpcMqttReq.getClientId().equals(this.clientId)) {
                     return;
                 }
-                Object object = exportObjectMap.get(rpcMqttReq.getServiceName());
-                RpcMqttRes rpcMqttRes = new RpcMqttRes();
-                rpcMqttRes.setReqId(rpcMqttReq.getReqId());
-                rpcMqttRes.setClientId(RpcMqttRemote.this.clientId);
-                if (object == null) {
-                    rpcMqttRes.setCode(Constants.RPC_MQTT_RES_SERVICE_NOT_FOUND);
-                    rpcMqttRes.setMsg("rpc can not find serviceName = " + rpcMqttReq.getServiceName());
-                } else {
-                    Class<?> clss = exportClassMap.get(rpcMqttReq.getServiceName());
-                    Method[] methods = clss.getMethods();
-                    Method method = null;
-                    List<Object> args = new ArrayList<>();
-                    for (Method md : methods) {
-                        //methodName equals and param length equals
-                        if (md.getName().equals(rpcMqttReq.getMethodName()) && md.getParameterCount() == Optional.ofNullable(rpcMqttReq.getArgs()).orElseGet(ArrayList::new).size()) {
-                            boolean paramMatch = true;
-                            Class<?>[] paramTypes = md.getParameterTypes();
-                            if (paramTypes.length > 0) {
-                                for (int i = 0; i < paramTypes.length; i++) {
-                                    Class<?> pt = paramTypes[i];
-                                    String ps = rpcMqttReq.getArgs().get(i);
-                                    try {
-                                        args.add(GsonUtil.toJavaObject(ps, pt));
-                                    } catch (Exception e) {
-                                        paramMatch = false;
-                                        break;
+                RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
+                    Object object = exportObjectMap.get(req.getServiceName());
+                    RpcMqttRes rpcMqttRes = new RpcMqttRes();
+                    rpcMqttRes.setReqId(req.getReqId());
+                    rpcMqttRes.setClientId(RpcMqttRemote.this.clientId);
+                    if (object == null) {
+                        rpcMqttRes.setCode(Constants.RPC_MQTT_RES_SERVICE_NOT_FOUND);
+                        rpcMqttRes.setMsg("rpc can not find serviceName = " + req.getServiceName());
+                    } else {
+                        Class<?> clss = exportClassMap.get(req.getServiceName());
+                        Method[] methods = clss.getMethods();
+                        Method method = null;
+                        List<Object> args = new ArrayList<>();
+                        for (Method md : methods) {
+                            //methodName equals and param length equals
+                            if (md.getName().equals(req.getMethodName()) && md.getParameterCount() == Optional.ofNullable(req.getArgs()).orElseGet(ArrayList::new).size()) {
+                                boolean paramMatch = true;
+                                Class<?>[] paramTypes = md.getParameterTypes();
+                                if (paramTypes.length > 0) {
+                                    for (int i = 0; i < paramTypes.length; i++) {
+                                        Class<?> pt = paramTypes[i];
+                                        String ps = req.getArgs().get(i);
+                                        try {
+                                            args.add(GsonUtil.toJavaObject(ps, pt));
+                                        } catch (Exception e) {
+                                            paramMatch = false;
+                                            break;
+                                        }
                                     }
                                 }
+                                if (paramMatch) {
+                                    method = md;
+                                    break;
+                                }
                             }
-                            if (paramMatch) {
-                                method = md;
-                                break;
+                        }
+                        if (method == null) {
+                            rpcMqttRes.setCode(Constants.RPC_MQTT_RES_METHOD_NOT_FOUND);
+                            rpcMqttRes.setMsg("rpc can not find methodName = " + req.getServiceName() + "." + req.getMethodName());
+                        } else {
+                            rpcMqttRes.setCode(Constants.RPC_MQTT_RES_OK);
+                            try {
+                                rpcMqttRes.setResult(GsonUtil.toJson(method.invoke(object, args.toArray())));
+                            } catch (Exception ex) {
+                                rpcMqttRes.setMsg("rpc invoke error " + ExceptionUtil.getExceptionMessage(ex));
+                                rpcMqttRes.setCode(Constants.RPC_MQTT_RES_INVOKE_ERROR);
                             }
                         }
                     }
-                    if (method == null) {
-                        rpcMqttRes.setCode(Constants.RPC_MQTT_RES_METHOD_NOT_FOUND);
-                        rpcMqttRes.setMsg("rpc can not find methodName = " + rpcMqttReq.getServiceName() + "." + rpcMqttReq.getMethodName());
-                    } else {
-                        rpcMqttRes.setCode(Constants.RPC_MQTT_RES_OK);
-                        try {
-                            rpcMqttRes.setResult(GsonUtil.toJson(method.invoke(object, args.toArray())));
-                        } catch (Exception ex) {
-                            rpcMqttRes.setMsg("rpc invoke error " + ExceptionUtil.getExceptionMessage(ex));
-                            rpcMqttRes.setCode(Constants.RPC_MQTT_RES_INVOKE_ERROR);
-                        }
-                    }
-                }
-                RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
+                    RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
+                    return new RpcMqttResult(CompletableFuture.completedFuture(rpcMqttRes));
+                });
+                chain.doFilter(rpcMqttReq, new RpcMqttContext());
             } catch (Exception e) {
                 //couldn't happen
                 logger.error("rpc handle receive msg = {} error", payload, e);
