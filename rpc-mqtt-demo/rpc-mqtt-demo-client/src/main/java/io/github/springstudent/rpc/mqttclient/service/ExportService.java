@@ -22,4 +22,6 @@ public interface ExportService {
     void complex(List<String> strs, Map<String,Object> map);
 
     void complex(List<String> strs, Date date);
+
+    int except()throws Exception;
 }

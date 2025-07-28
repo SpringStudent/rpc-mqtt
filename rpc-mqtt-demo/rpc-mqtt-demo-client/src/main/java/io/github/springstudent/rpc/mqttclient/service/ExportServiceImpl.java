@@ -61,4 +61,9 @@ public class ExportServiceImpl implements ExportService {
         System.out.println(strs);
         System.out.println(date);
     }
+
+    @Override
+    public int except() throws Exception {
+        return 1/0;
+    }
 }

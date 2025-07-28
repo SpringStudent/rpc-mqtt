@@ -145,5 +145,16 @@ public class RpcMqttInvokeTest {
         RpcMqttRes rpcMqttRes10 = rpcMqttCall10.get();
         System.out.println(rpcMqttRes10);
         System.out.println("=====complex invoke end");
+        //抛出异常
+        System.out.println("=====except invoke start");
+        RpcMqttReq rpcMqttReq11 = new RpcMqttReq();
+        rpcMqttReq11.setServiceName("ExportService");
+        rpcMqttReq11.setMethodName("except");
+        rpcMqttReq11.setBroadcastInvoke(false);
+        rpcMqttReq11.setClientId("service_client_111");
+        RpcMqttCall rpcMqttCall11 = rpcMqttInvoker.call(rpcMqttReq11);
+        RpcMqttRes rpcMqttRes11 = rpcMqttCall11.get();
+        System.out.println(rpcMqttRes11);
+        System.out.println("=====except invoke end");
     }
 }
