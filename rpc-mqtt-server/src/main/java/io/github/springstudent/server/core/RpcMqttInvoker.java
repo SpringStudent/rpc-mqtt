@@ -59,7 +59,6 @@ public class RpcMqttInvoker extends RpcMqttClient {
         RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
             RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);
             RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req));
-            System.out.println("1111");
             return new RpcMqttResult(rpcMqttCall);
         });
         return (RpcMqttCall)(chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
