@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class CostRpcMqttFilter implements RpcMqttFilter {
     @Override
     public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
-        rpcMqttContext.context().put("a","1");
+        rpcMqttContext.setAttribute("a","1");
         System.out.println("CostRpcMqttFilter invoke start");
         try {
             return chain.doFilter(rpcMqttReq, rpcMqttContext);
