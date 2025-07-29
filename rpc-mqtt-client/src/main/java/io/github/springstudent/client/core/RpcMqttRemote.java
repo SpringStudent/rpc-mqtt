@@ -147,6 +147,8 @@ public class RpcMqttRemote extends RpcMqttClient {
                             }
                         }
                     }
+                    rpcMqttContext.setData(RpcMqttContext.getContext().getData());
+                    rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
                     rpcMqttRes.setRpcMqttContext(rpcMqttContext);
                     RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
                     return new RpcMqttResult(CompletableFuture.completedFuture(rpcMqttRes));
