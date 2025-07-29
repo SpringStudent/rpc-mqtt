@@ -1,5 +1,6 @@
 package io.github.springstudent.rpc.mqttclient.service;
 
+import io.github.springstudent.common.filter.RpcMqttContext;
 import io.github.springstudent.rpc.mqttclient.bean.ExportBean;
 import io.github.springstudent.rpc.mqttclient.bean.ExportParam;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public ExportBean export(ExportParam exportParam, String name, Date time) {
         ExportBean exportBean = new ExportBean();
-        exportBean.setName("hello");
+        exportBean.setName("hello "+ RpcMqttContext.getContext().getAttributes());
         exportBean.setAlpha(exportParam.getAlpha());
         exportBean.setTime(time);
         return exportBean;

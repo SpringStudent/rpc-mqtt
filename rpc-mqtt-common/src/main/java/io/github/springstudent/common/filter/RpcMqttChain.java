@@ -1,7 +1,10 @@
 package io.github.springstudent.common.filter;
 
+import io.github.springstudent.common.bean.Orderable;
 import io.github.springstudent.common.bean.RpcMqttReq;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -21,6 +24,7 @@ public class RpcMqttChain {
     }
 
     public RpcMqttChain(List<RpcMqttFilter> filters, Invoker invoker) {
+        Collections.sort(filters, Comparator.comparingInt(Orderable::getOrder));
         this.filters = filters;
         this.invoker = invoker;
     }

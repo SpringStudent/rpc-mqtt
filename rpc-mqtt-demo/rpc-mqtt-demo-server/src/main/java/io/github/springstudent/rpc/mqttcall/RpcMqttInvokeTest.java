@@ -3,6 +3,7 @@ package io.github.springstudent.rpc.mqttcall;
 import io.github.springstudent.common.bean.RpcMqttConfig;
 import io.github.springstudent.common.bean.RpcMqttReq;
 import io.github.springstudent.common.bean.RpcMqttRes;
+import io.github.springstudent.common.filter.RpcMqttContext;
 import io.github.springstudent.server.core.RpcMqttCall;
 import io.github.springstudent.server.core.RpcMqttInvoker;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -27,6 +28,7 @@ public class RpcMqttInvokeTest {
         rpcMqttConfig.setMqttConnectionTimeout(30);
         rpcMqttInvoker.start(rpcMqttConfig);
         //广播调用
+        RpcMqttContext.getContext().setAttribute("a",1);
         System.out.println("=====broadcast invoke start");
         for (int i = 0; i < 10; i++) {
             RpcMqttReq rpcMqttReq = new RpcMqttReq();

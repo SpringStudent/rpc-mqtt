@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2025/7/28 13:59
  **/
 public class RpcMqttContext {
+    private static final ThreadLocal<RpcMqttContext> context = ThreadLocal.withInitial(RpcMqttContext::new);
 
     private Map<String, Object> attributes = new ConcurrentHashMap<String, Object>(4);
 
@@ -32,6 +33,16 @@ public class RpcMqttContext {
         return null;
     }
 
+    public void setAttributes(Map<String, Object> map) {
+        if (map != null) {
+            this.attributes.putAll(map);
+        }
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
     public Object removeAttribute(String key) {
         return attributes.remove(key);
     }
@@ -53,5 +64,17 @@ public class RpcMqttContext {
         builder.append(data);
         builder.append("]");
         return builder.toString();
+    }
+
+    public static RpcMqttContext getContext() {
+        return context.get();
+    }
+
+    public static void setContext(RpcMqttContext rpcMqttContext) {
+        context.set(rpcMqttContext);
+    }
+
+    public static void removeContext() {
+        context.remove();
     }
 }

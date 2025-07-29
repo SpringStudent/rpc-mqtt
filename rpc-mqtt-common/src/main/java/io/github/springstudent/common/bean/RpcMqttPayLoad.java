@@ -1,5 +1,7 @@
 package io.github.springstudent.common.bean;
 
+import io.github.springstudent.common.filter.RpcMqttContext;
+
 /**
  * mqtt消息载荷
  * @author ZhouNing
@@ -8,6 +10,8 @@ public abstract class RpcMqttPayLoad {
     protected long reqId;
 
     protected String clientId;
+
+    protected RpcMqttContext rpcMqttContext;
 
     public long getReqId() {
         return reqId;
@@ -23,5 +27,13 @@ public abstract class RpcMqttPayLoad {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public RpcMqttContext getRpcMqttContext() {
+        return rpcMqttContext;
+    }
+
+    public void setRpcMqttContext(RpcMqttContext rpcMqttContext) {
+        this.rpcMqttContext = rpcMqttContext;
     }
 }

@@ -1,26 +1,29 @@
-package io.github.springstudent.rpc.mqttclient.core;
+package io.github.springstudent.common.filter.server;
 
 import io.github.springstudent.common.bean.RpcMqttReq;
 import io.github.springstudent.common.filter.RpcMqttChain;
 import io.github.springstudent.common.filter.RpcMqttContext;
 import io.github.springstudent.common.filter.RpcMqttFilter;
 import io.github.springstudent.common.filter.RpcMqttResult;
-import org.springframework.stereotype.Component;
 
-@Component
-public class CostRpcMqttFilter implements RpcMqttFilter {
+/**
+ * @author ZhouNing
+ * @date 2025/7/29 8:52
+ **/
+public class ServerContextFilter implements RpcMqttFilter {
     @Override
     public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
-        System.out.println("CostRpcMqttFilter invoke start attributes"+rpcMqttReq.getRpcMqttContext().getAttributes());
         try {
+            rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
+            rpcMqttReq.setRpcMqttContext(rpcMqttContext);
             return chain.doFilter(rpcMqttReq, rpcMqttContext);
         }finally {
-            System.out.println("CostRpcMqttFilter invoke end");
+            RpcMqttContext.removeContext();
         }
     }
 
     @Override
     public int getOrder() {
-        return 0;
+        return Integer.MIN_VALUE;
     }
 }

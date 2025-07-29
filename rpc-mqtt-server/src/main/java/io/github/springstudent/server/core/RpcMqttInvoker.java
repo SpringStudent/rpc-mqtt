@@ -4,6 +4,7 @@ import io.github.springstudent.common.bean.*;
 import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.RpcMqttChain;
 import io.github.springstudent.common.filter.RpcMqttContext;
+import io.github.springstudent.common.filter.server.ServerContextFilter;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -31,6 +32,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
     public void start(RpcMqttConfig rpcMqttConfig) throws MqttException, InterruptedException {
         super.connect(rpcMqttConfig);
+        super.addFilter(new ServerContextFilter());
         this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
         initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS);
     }
