@@ -37,7 +37,7 @@ public class RpcMqttInvokeTest {
             rpcMqttReq.setMethodName("sayHello");
             RpcMqttCall rpcMqttCall = rpcMqttInvoker.call(rpcMqttReq);
             RpcMqttRes rpcMqttRes = rpcMqttCall.get();
-            System.out.println(rpcMqttRes);
+            System.out.println(rpcMqttRes+": "+rpcMqttRes.getRpcMqttContext().getAttributes());
         }
         System.out.println("=====broadcast invoke end");
         //随机一台机器调用
