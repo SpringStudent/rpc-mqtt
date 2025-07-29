@@ -15,7 +15,7 @@ public class ServerContextFilter implements RpcMqttFilter {
     public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
         try {
             rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
-            rpcMqttReq.setRpcMqttContext(rpcMqttContext);
+            rpcMqttReq.getRpcMqttContext().setAttributes(rpcMqttContext.getAttributes());
             return chain.doFilter(rpcMqttReq, rpcMqttContext);
         }finally {
             RpcMqttContext.removeContext();

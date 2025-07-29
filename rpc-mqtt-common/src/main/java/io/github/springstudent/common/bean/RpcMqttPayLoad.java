@@ -4,6 +4,7 @@ import io.github.springstudent.common.filter.RpcMqttContext;
 
 /**
  * mqtt消息载荷
+ *
  * @author ZhouNing
  **/
 public abstract class RpcMqttPayLoad {
@@ -11,7 +12,7 @@ public abstract class RpcMqttPayLoad {
 
     protected String clientId;
 
-    protected RpcMqttContext rpcMqttContext;
+    protected RpcMqttContext rpcMqttContext = new RpcMqttContext();
 
     public long getReqId() {
         return reqId;

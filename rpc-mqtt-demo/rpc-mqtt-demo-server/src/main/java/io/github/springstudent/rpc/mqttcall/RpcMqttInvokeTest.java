@@ -46,6 +46,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq2.setServiceName("ExportService");
         rpcMqttReq2.setMethodName("sayHello");
         rpcMqttReq2.setBroadcastInvoke(false);
+        rpcMqttReq2.getRpcMqttContext().setAttribute("mmm","你好");
         RpcMqttCall rpcMqttCall2 = rpcMqttInvoker.call(rpcMqttReq2);
         RpcMqttRes rpcMqttRes2 = rpcMqttCall2.get();
         System.out.println(rpcMqttRes2);
