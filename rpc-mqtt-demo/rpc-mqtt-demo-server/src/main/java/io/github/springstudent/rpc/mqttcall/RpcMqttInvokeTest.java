@@ -28,7 +28,8 @@ public class RpcMqttInvokeTest {
         rpcMqttConfig.setMqttConnectionTimeout(30);
         rpcMqttInvoker.start(rpcMqttConfig);
         //广播调用
-        RpcMqttContext.getContext().setAttribute("a",1);
+//        RpcMqttContext.getContext().setAttribute("a",1);
+        RpcMqttContext.getContext().setAttribute("contextBean","{\"clientId\":\"testClientId\",\"topics\":[\"topic1\",\"topic2\",\"topic3\"]}");
         System.out.println("=====broadcast invoke start");
         for (int i = 0; i < 10; i++) {
             RpcMqttReq rpcMqttReq = new RpcMqttReq();
