@@ -58,7 +58,7 @@ public class RpcMqttContext {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("EventContext [attributes=");
+        builder.append("RpcMqttContext [attributes=");
         builder.append(attributes);
         builder.append(", data=");
         builder.append(data);
