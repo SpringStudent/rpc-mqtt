@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  **/
 public class Constants {
     public static final int RPC_MQTT_HEARTBEAT_TIMEOUT = 5;
-    public static final int RPC_MQTT_REQUEST_TIMEOUT = 3;
+    public static final int RPC_MQTT_REQUEST_TIMEOUT = 5;
     public static final String RPC_MQTT_REQ_TOPIC = "rpc/mqtt/req";
     public static final String RPC_MQTT_RES_TOPIC = "rpc/mqtt/res";
     public static final String RPC_MQTT_HEARTBEAT_TOPIC = "rpc/mqtt/heartbeat";

@@ -1,9 +1,9 @@
 package io.github.springstudent.server.core;
 
 import io.github.springstudent.common.bean.*;
-import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.RpcMqttChain;
 import io.github.springstudent.common.filter.RpcMqttContext;
+import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.server.ServerContextFilter;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -43,7 +43,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         if (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
             if (System.currentTimeMillis() - subscribeTime <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
-                Thread.sleep(1000);
+                Thread.sleep(Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L / 2);
                 return call(rpcMqttReq);
             } else {
                 throw new IllegalStateException("call error,online remote size is zero");
@@ -62,7 +62,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
             RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req));
             return new RpcMqttResult(rpcMqttCall);
         });
-        return (RpcMqttCall)(chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
+        return (RpcMqttCall) (chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
     }
 
     private void checkRpcMqttReq(RpcMqttReq rpcMqttReq) {
