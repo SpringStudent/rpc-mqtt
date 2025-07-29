@@ -15,11 +15,8 @@ public class ClientContextFilter implements RpcMqttFilter {
     @Override
     public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
         try {
-            rpcMqttContext.setAttributes(rpcMqttReq.getRpcMqttContext().getAttributes());
-            rpcMqttContext.setData(rpcMqttReq.getRpcMqttContext().getData());
             rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
             rpcMqttContext.setData(RpcMqttContext.getContext().getData());
-            RpcMqttContext.setContext(rpcMqttContext);
             return chain.doFilter(rpcMqttReq, rpcMqttContext);
         }finally {
             RpcMqttContext.removeContext();
