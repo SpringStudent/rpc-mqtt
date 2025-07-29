@@ -15,6 +15,7 @@ public class ClientContextFilter implements RpcMqttFilter {
     @Override
     public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
         try {
+            RpcMqttContext.setContext(rpcMqttContext);
             rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
             rpcMqttContext.setData(RpcMqttContext.getContext().getData());
             return chain.doFilter(rpcMqttReq, rpcMqttContext);
@@ -25,6 +26,6 @@ public class ClientContextFilter implements RpcMqttFilter {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE;
     }
 }
