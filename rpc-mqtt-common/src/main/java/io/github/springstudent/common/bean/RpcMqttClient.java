@@ -20,7 +20,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
 
     protected ExecutorService recieveExecutor;
 
-    protected MqttClient mqttClient;
+    protected MqttAsyncClient mqttClient;
 
     protected RpcMqttConfig rpcMqttConfig;
 
@@ -37,7 +37,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
             mqttDefaultFilePersistence = new MqttDefaultFilePersistence();
         }
         this.clientId = rpcMqttConfig.getMqttClientId();
-        mqttClient = new MqttClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
+        mqttClient = new MqttAsyncClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setUserName(rpcMqttConfig.getMqttUsername());
         mqttConnectOptions.setPassword(rpcMqttConfig.getMqttPassword().toCharArray());
@@ -51,8 +51,8 @@ public class RpcMqttClient implements MqttCallbackExtended {
         }
     }
 
-    public void publish(String topic, MqttMessage mqttMessage) throws MqttException {
-        mqttClient.publish(topic, mqttMessage);
+    public IMqttDeliveryToken publish(String topic, MqttMessage mqttMessage) throws MqttException {
+        return mqttClient.publish(topic, mqttMessage);
     }
 
     public boolean isConnected() {

@@ -128,7 +128,7 @@ public class RpcMqttInvokeTest {
         rpcMqttReq9.setMethodName("timeout");
         rpcMqttReq9.setBroadcastInvoke(false);
         rpcMqttReq9.setClientId("service_client_111");
-        rpcMqttReq9.setTimeout(5000);
+        rpcMqttReq9.setTimeout(1000);
         RpcMqttCall rpcMqttCall9 = rpcMqttInvoker.call(rpcMqttReq9);
         RpcMqttRes rpcMqttRes9 = rpcMqttCall9.get();
         System.out.println(rpcMqttRes9);

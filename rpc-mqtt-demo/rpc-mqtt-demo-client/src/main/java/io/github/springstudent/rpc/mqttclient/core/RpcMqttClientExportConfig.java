@@ -18,7 +18,7 @@ public class RpcMqttClientExportConfig {
     private SpringExportFactory springExportFactory;
 
     @Resource
-    private RpcMqttFilter rpcMqttFilter;
+    private CostRpcMqttFilter rpcMqttFilter;
 
     @Bean
     public RpcMqttRemote rpcMqttClient() throws MqttException {
