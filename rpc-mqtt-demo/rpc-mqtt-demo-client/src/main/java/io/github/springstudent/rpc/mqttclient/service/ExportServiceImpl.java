@@ -12,7 +12,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public void sayHello() {
         RpcMqttContext.getContext().setAttribute("gan","淦");
-        System.out.println("hello,i am mqttclient1");
+        System.out.println("hello,i am mqttclient1"+RpcMqttContext.getContext().getAttribute("contextBean"));
     }
 
     @Override

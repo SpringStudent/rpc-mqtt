@@ -6,7 +6,8 @@ import io.github.springstudent.common.filter.RpcMqttContext;
 import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.server.ServerContextFilter;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
@@ -14,8 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 调用远程服务
@@ -57,7 +60,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         }
         RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
             RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);
-            RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req));
+            RpcMqttInvoker.this.mqttClient.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req), null, new PublishActionListener(req));
             return new RpcMqttResult(rpcMqttCall);
         });
         return (RpcMqttCall) (chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
@@ -121,7 +124,29 @@ public class RpcMqttInvoker extends RpcMqttClient {
         });
     }
 
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken token) {
+    static class PublishActionListener implements IMqttActionListener {
+
+        private final RpcMqttReq rpcMqttReq;
+
+        PublishActionListener(RpcMqttReq rpcMqttReq) {
+            this.rpcMqttReq = rpcMqttReq;
+        }
+
+        @Override
+        public void onSuccess(IMqttToken asyncActionToken) {
+            RpcMqttCall.startTimeout(rpcMqttReq);
+        }
+
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            RpcMqttCall call = RpcMqttCall.removeFuture(rpcMqttReq.getReqId());
+            if (call != null) {
+                RpcMqttRes response = new RpcMqttRes();
+                response.setReqId(rpcMqttReq.getReqId());
+                response.setMsg(ExceptionUtil.getExceptionMessage(exception));
+                response.setCode(Constants.RPC_MQTT_RES_PUBLISH_ERROR);
+                call.complete(response);
+            }
+        }
     }
 }
