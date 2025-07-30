@@ -34,7 +34,7 @@ public class RpcMqttRemote extends RpcMqttClient {
 
     private ScheduledFuture schedulerFuture;
 
-    private boolean connectFlag;
+    private volatile boolean connectFlag;
 
     public void start(RpcMqttConfig rpcMqttConfig, List<Class<?>> classList, RpcExportFactory rpcExportFactory) throws MqttException {
         if (classList == null || classList.size() == 0) {
