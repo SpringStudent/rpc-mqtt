@@ -123,10 +123,5 @@ public class RpcMqttInvoker extends RpcMqttClient {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        try {
-
-        }catch (Exception e){
-
-        }
     }
 }
