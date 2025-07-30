@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * mqttclient包装
@@ -20,7 +19,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
 
     protected ExecutorService recieveExecutor;
 
-    protected MqttAsyncClient mqttClient;
+    protected MqttClient mqttClient;
 
     protected RpcMqttConfig rpcMqttConfig;
 
@@ -37,7 +36,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
             mqttDefaultFilePersistence = new MqttDefaultFilePersistence();
         }
         this.clientId = rpcMqttConfig.getMqttClientId();
-        mqttClient = new MqttAsyncClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
+        mqttClient = new MqttClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setUserName(rpcMqttConfig.getMqttUsername());
         mqttConnectOptions.setPassword(rpcMqttConfig.getMqttPassword().toCharArray());
@@ -51,8 +50,8 @@ public class RpcMqttClient implements MqttCallbackExtended {
         }
     }
 
-    public IMqttDeliveryToken publish(String topic, MqttMessage mqttMessage) throws MqttException {
-        return mqttClient.publish(topic, mqttMessage);
+    public void publish(String topic, MqttMessage mqttMessage) throws MqttException {
+        mqttClient.publish(topic, mqttMessage);
     }
 
     public boolean isConnected() {

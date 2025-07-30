@@ -28,8 +28,6 @@ public class RpcMqttInvoker extends RpcMqttClient {
     private long subscribeTime;
     private CountDownLatch initLatch = new CountDownLatch(1);
 
-    private final Map<IMqttDeliveryToken, RpcMqttReq> deliveryMap = new ConcurrentHashMap<>(64);
-
     public void start(RpcMqttConfig rpcMqttConfig) throws MqttException, InterruptedException {
         super.connect(rpcMqttConfig);
         super.addFilter(new ServerContextFilter());
@@ -43,7 +41,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         if (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
             if (System.currentTimeMillis() - subscribeTime <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
-                Thread.sleep(Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L / 2);
+                Thread.sleep(1000);
                 return call(rpcMqttReq);
             } else {
                 throw new IllegalStateException("call error,online remote size is zero");
@@ -59,7 +57,7 @@ public class RpcMqttInvoker extends RpcMqttClient {
         }
         RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
             RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);
-            deliveryMap.put(RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req)), req);
+            RpcMqttInvoker.this.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req));
             return new RpcMqttResult(rpcMqttCall);
         });
         return (RpcMqttCall) (chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
@@ -126,21 +124,9 @@ public class RpcMqttInvoker extends RpcMqttClient {
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
         try {
-            RpcMqttReq rpcMqttReq = deliveryMap.remove(token);
-            if (token.getException() != null) {
-                RpcMqttCall call = RpcMqttCall.removeFuture(rpcMqttReq.getReqId());
-                if (call != null) {
-                    RpcMqttRes response = new RpcMqttRes();
-                    response.setReqId(rpcMqttReq.getReqId());
-                    response.setMsg(ExceptionUtil.getExceptionMessage(token.getException()));
-                    response.setCode(Constants.RPC_MQTT_RES_DELIVERY_REQ_FAILED);
-                    call.complete(response);
-                }
-            } else {
-                RpcMqttCall.startTimeout(rpcMqttReq);
-            }
-        } catch (Exception e) {
-            logger.error("Process deliveryComplete error", e);
+
+        }catch (Exception e){
+
         }
     }
 }

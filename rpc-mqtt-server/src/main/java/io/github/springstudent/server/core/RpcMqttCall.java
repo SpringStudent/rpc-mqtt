@@ -39,11 +39,9 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
     }
 
     public static RpcMqttCall newRpcMqttCall(RpcMqttReq rpcMqttReq) {
-        return new RpcMqttCall(rpcMqttReq.getTimeout(), rpcMqttReq.getReqId());
-    }
-
-    public static void startTimeout(RpcMqttReq rpcMqttReq){
+        RpcMqttCall rpcMqttCall = new RpcMqttCall(rpcMqttReq.getTimeout(), rpcMqttReq.getReqId());
         Constants.HASHED_WHEEL_TIMER.newTimeout(new TimeoutCheck(rpcMqttReq.getReqId()), rpcMqttReq.getTimeout(), TimeUnit.MILLISECONDS);
+        return rpcMqttCall;
     }
 
     public static RpcMqttCall removeFuture(long id) {
