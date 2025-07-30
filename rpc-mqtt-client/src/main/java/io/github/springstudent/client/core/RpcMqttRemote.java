@@ -1,9 +1,10 @@
 package io.github.springstudent.client.core;
 
 import io.github.springstudent.common.bean.*;
-import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.RpcMqttChain;
 import io.github.springstudent.common.filter.RpcMqttContext;
+import io.github.springstudent.common.filter.RpcMqttResult;
+import io.github.springstudent.common.filter.client.ClearContextFilter;
 import io.github.springstudent.common.filter.client.ClientContextFilter;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -48,7 +49,7 @@ public class RpcMqttRemote extends RpcMqttClient {
             exportClassMap.put(clss.getSimpleName(), clss);
         }
         super.connect(rpcMqttConfig);
-        super.addFilter(new ClientContextFilter());
+        super.addFilter(new ClientContextFilter(), new ClearContextFilter());
         this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
         this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("rpc-mqtt-remote-heartbeart-"));
         this.schedulerFuture = scheduler.scheduleWithFixedDelay(() -> {
