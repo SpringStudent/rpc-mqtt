@@ -8,6 +8,7 @@
 * Consumers do not need to rely on the provider's JAR
 * Consumer and provider networks can be isolated
 * Providers are not required to implement interfaces
+* extensible responsibility chain support
 
 #### Differences from RPC frameworks such as dubbo, grpc, motan, etc.
 
