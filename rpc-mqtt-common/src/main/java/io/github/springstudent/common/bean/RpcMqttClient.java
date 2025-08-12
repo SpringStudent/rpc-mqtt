@@ -46,7 +46,7 @@ public class RpcMqttClient implements MqttCallbackExtended {
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttClient.setCallback(this);
         if (!isConnected()) {
-            mqttClient.connect(mqttConnectOptions);
+            mqttClient.connect(mqttConnectOptions).waitForCompletion();
         }
     }
 

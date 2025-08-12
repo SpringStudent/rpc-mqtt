@@ -35,7 +35,9 @@ public class RpcMqttInvoker extends RpcMqttClient {
         super.connect(rpcMqttConfig);
         super.addFilter(new ServerContextFilter());
         this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
-        initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS);
+        if(!initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS)){
+            throw new IllegalStateException("init rpcMqttInvoker error,connect timeout");
+        };
     }
 
     public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws Exception {
