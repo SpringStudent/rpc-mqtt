@@ -10,6 +10,10 @@
 * Providers are not required to implement interfaces
 * Extensible responsibility chain support
 
+#### Architecture
+
+![architecture](diagram.png)
+
 #### Differences from RPC frameworks such as dubbo, grpc, motan, etc.
 
 Dubbo focuses on cross-service calls within an intranet, while RPC-MQTT emphasizes calls between services across different networks.

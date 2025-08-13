@@ -10,6 +10,10 @@
 * 提供方不要求必须实现接口
 * 可扩展的责任链支持
 
+#### 架构图
+
+![architecture](diagram.png)
+
 #### 与dubbo、grpc、motan、等rpc框架的区别
 
 dubbo侧重于内网跨服务之间调用，rpc-mqtt则侧重于不同网络服务之间的调用。
