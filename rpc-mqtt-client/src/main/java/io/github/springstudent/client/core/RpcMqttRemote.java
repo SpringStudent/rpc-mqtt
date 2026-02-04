@@ -111,10 +111,11 @@ public class RpcMqttRemote extends RpcMqttClient {
                         Class<?> clss = exportClassMap.get(req.getServiceName());
                         Method[] methods = clss.getMethods();
                         Method method = null;
-                        List<Object> args = new ArrayList<>();
+                        List<Object> args = null;
                         for (Method md : methods) {
                             //methodName equals and param length equals
                             if (md.getName().equals(req.getMethodName()) && md.getParameterCount() == Optional.ofNullable(req.getArgs()).orElseGet(ArrayList::new).size()) {
+                                List<Object> argValues = new ArrayList<>();
                                 boolean paramMatch = true;
                                 Class<?>[] paramTypes = md.getParameterTypes();
                                 if (paramTypes.length > 0) {
@@ -122,7 +123,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                                         Class<?> pt = paramTypes[i];
                                         String ps = req.getArgs().get(i);
                                         try {
-                                            args.add(GsonUtil.toJavaObject(ps, pt));
+                                            argValues.add(GsonUtil.toJavaObject(ps, pt));
                                         } catch (Exception e) {
                                             paramMatch = false;
                                             break;
@@ -131,6 +132,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                                 }
                                 if (paramMatch) {
                                     method = md;
+                                    args = argValues;
                                     break;
                                 }
                             }
