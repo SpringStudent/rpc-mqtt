@@ -143,7 +143,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                         } else {
                             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_OK);
                             try {
-                                rpcMqttRes.setResult(GsonUtil.toJson(method.invoke(object, args.toArray())));
+                                rpcMqttRes.setResult(GsonUtil.toJson(method.invoke(object, args != null ? args.toArray() : new Object[]{})));
                             } catch (Exception ex) {
                                 rpcMqttRes.setMsg("rpc invoke error " + ExceptionUtil.getExceptionMessage(ex));
                                 rpcMqttRes.setCode(Constants.RPC_MQTT_RES_INVOKE_ERROR);
