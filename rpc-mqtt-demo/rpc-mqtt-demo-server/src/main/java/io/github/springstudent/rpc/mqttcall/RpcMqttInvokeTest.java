@@ -20,7 +20,7 @@ public class RpcMqttInvokeTest {
     public static void main(String[] args) throws Exception {
         RpcMqttInvoker rpcMqttInvoker = new RpcMqttInvoker();
         RpcMqttConfig rpcMqttConfig = new RpcMqttConfig();
-        rpcMqttConfig.setMqttBrokerAddress("tcp://172.16.2.88:8002");
+        rpcMqttConfig.setMqttBrokerAddress("tcp://localhost:1883");
         rpcMqttConfig.setMqttClientId("service_call");
         rpcMqttConfig.setMqttUsername("-1");
         rpcMqttConfig.setMqttPassword("15ead68628334b4d851df1badb8be508");
