@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -32,9 +31,11 @@ public class RpcMqttInvoker extends RpcMqttClient {
     private CountDownLatch initLatch = new CountDownLatch(1);
 
     public void start(RpcMqttConfig rpcMqttConfig) throws MqttException, InterruptedException {
-        super.connect(rpcMqttConfig);
+        super.mqttConfig(rpcMqttConfig);
         super.addFilter(new ServerContextFilter());
-        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
+        this.recieveExecutor = ThreadUtils.newBoundedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
+        this.initLatch = new CountDownLatch(1);
+        super.connect(rpcMqttConfig);
         if(!initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS)){
             throw new IllegalStateException("init rpcMqttInvoker error,connect timeout");
         };
@@ -43,22 +44,21 @@ public class RpcMqttInvoker extends RpcMqttClient {
     public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws Exception {
         checkRpcMqttReq(rpcMqttReq);
         List<String> onlineRemotes = RpcRemoteOnlineManager.onlineRemotes();
-        if (onlineRemotes.size() == 0) {
+        while (onlineRemotes.size() == 0) {
             //subscribe gap time rather than a heartbeat period,keep wait and then invoke
             if (System.currentTimeMillis() - subscribeTime <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1000L) {
                 Thread.sleep(1000);
-                return call(rpcMqttReq);
+                onlineRemotes = RpcRemoteOnlineManager.onlineRemotes();
             } else {
                 throw new IllegalStateException("call error,online remote size is zero");
             }
-        } else {
-            String clientId = null;
-            if (rpcMqttReq.isBroadcastInvoke()) {
-                rpcMqttReq.setClientId(null);
-            } else if (rpcMqttReq.getClientId() == null) {
-                clientId = doSelect(onlineRemotes);
-                rpcMqttReq.setClientId(clientId);
-            }
+        }
+        String clientId = null;
+        if (rpcMqttReq.isBroadcastInvoke()) {
+            rpcMqttReq.setClientId(null);
+        } else if (rpcMqttReq.getClientId() == null) {
+            clientId = doSelect(onlineRemotes);
+            rpcMqttReq.setClientId(clientId);
         }
         RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
             RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);

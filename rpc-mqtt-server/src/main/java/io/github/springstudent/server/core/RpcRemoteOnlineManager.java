@@ -16,6 +16,9 @@ public class RpcRemoteOnlineManager {
     private static Map<String, Long> REMOTE_HEARTBEAT_MAP = new ConcurrentHashMap<>();
 
     public static void heartBeat(String clientId) {
+        if (clientId == null) {
+            return;
+        }
         REMOTE_HEARTBEAT_MAP.put(clientId, System.currentTimeMillis());
     }
 
@@ -23,8 +26,10 @@ public class RpcRemoteOnlineManager {
         List<String> result = new ArrayList<>();
         long now = System.currentTimeMillis();
         REMOTE_HEARTBEAT_MAP.forEach((aClientId, aLong) -> {
-        if ((now - aLong) <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1.2 * 1000L) {
+            if ((now - aLong) <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1.2 * 1000L) {
                 result.add(aClientId);
+            } else {
+                REMOTE_HEARTBEAT_MAP.remove(aClientId, aLong);
             }
         });
         return result;

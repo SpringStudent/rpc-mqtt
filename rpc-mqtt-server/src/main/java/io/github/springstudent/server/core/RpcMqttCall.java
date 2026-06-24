@@ -53,7 +53,6 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
     public static void destroy() {
         CALLS.clear();
-        Constants.HASHED_WHEEL_TIMER.stop();
     }
 
     @Override

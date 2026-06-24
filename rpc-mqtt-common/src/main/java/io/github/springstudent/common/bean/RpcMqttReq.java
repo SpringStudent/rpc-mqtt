@@ -16,7 +16,7 @@ public class RpcMqttReq extends RpcMqttPayLoad {
 
     private static final AtomicLong CALL_ID;
 
-    private boolean broadcastInvoke = true;
+    private boolean broadcastInvoke = false;
 
     private String serviceName;
 
@@ -95,6 +95,9 @@ public class RpcMqttReq extends RpcMqttPayLoad {
     }
 
     public void setTimeout(int timeout) {
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("rpc mqtt timeout must be positive");
+        }
         this.timeout = timeout;
     }
 

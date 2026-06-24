@@ -12,8 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,9 +51,10 @@ public class RpcMqttRemote extends RpcMqttClient {
             exportObjectMap.put(clss.getSimpleName(), rpcExportFactory.getExport(clss));
             exportClassMap.put(clss.getSimpleName(), clss);
         }
-        super.connect(rpcMqttConfig);
+        super.mqttConfig(rpcMqttConfig);
         super.addFilter(new ClientContextFilter(), new ClearContextFilter());
-        this.recieveExecutor = Executors.newFixedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
+        this.recieveExecutor = ThreadUtils.newBoundedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-remote-recive-executor-"));
+        super.connect(rpcMqttConfig);
         this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("rpc-mqtt-remote-heartbeart-"));
         this.schedulerFuture = scheduler.scheduleWithFixedDelay(() -> {
             try {
@@ -110,17 +114,19 @@ public class RpcMqttRemote extends RpcMqttClient {
                     } else {
                         Class<?> clss = exportClassMap.get(req.getServiceName());
                         Method[] methods = clss.getMethods();
+                        Arrays.sort(methods, Comparator.comparing(Method::toGenericString));
                         Method method = null;
                         List<Object> args = null;
+                        int matchCount = 0;
                         for (Method md : methods) {
                             //methodName equals and param length equals
                             if (md.getName().equals(req.getMethodName()) && md.getParameterCount() == Optional.ofNullable(req.getArgs()).orElseGet(ArrayList::new).size()) {
                                 List<Object> argValues = new ArrayList<>();
                                 boolean paramMatch = true;
-                                Class<?>[] paramTypes = md.getParameterTypes();
+                                Type[] paramTypes = md.getGenericParameterTypes();
                                 if (paramTypes.length > 0) {
                                     for (int i = 0; i < paramTypes.length; i++) {
-                                        Class<?> pt = paramTypes[i];
+                                        Type pt = paramTypes[i];
                                         String ps = req.getArgs().get(i);
                                         try {
                                             argValues.add(GsonUtil.toJavaObject(ps, pt));
@@ -131,15 +137,19 @@ public class RpcMqttRemote extends RpcMqttClient {
                                     }
                                 }
                                 if (paramMatch) {
+                                    matchCount++;
                                     method = md;
                                     args = argValues;
-                                    break;
                                 }
                             }
                         }
-                        if (method == null) {
+                        if (method == null || matchCount > 1) {
                             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_METHOD_NOT_FOUND);
-                            rpcMqttRes.setMsg("rpc can not find methodName = " + req.getServiceName() + "." + req.getMethodName());
+                            if (matchCount > 1) {
+                                rpcMqttRes.setMsg("rpc find ambiguous methodName = " + req.getServiceName() + "." + req.getMethodName());
+                            } else {
+                                rpcMqttRes.setMsg("rpc can not find methodName = " + req.getServiceName() + "." + req.getMethodName());
+                            }
                         } else {
                             rpcMqttRes.setCode(Constants.RPC_MQTT_RES_OK);
                             try {

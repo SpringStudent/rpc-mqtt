@@ -38,8 +38,12 @@ public class RpcMqttClient implements MqttCallbackExtended {
         this.clientId = rpcMqttConfig.getMqttClientId();
         mqttClient = new MqttAsyncClient(rpcMqttConfig.getMqttBrokerAddress(), clientId, mqttDefaultFilePersistence);
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-        mqttConnectOptions.setUserName(rpcMqttConfig.getMqttUsername());
-        mqttConnectOptions.setPassword(rpcMqttConfig.getMqttPassword().toCharArray());
+        if (StringUtils.isNotEmpty(rpcMqttConfig.getMqttUsername())) {
+            mqttConnectOptions.setUserName(rpcMqttConfig.getMqttUsername());
+        }
+        if (StringUtils.isNotEmpty(rpcMqttConfig.getMqttPassword())) {
+            mqttConnectOptions.setPassword(rpcMqttConfig.getMqttPassword().toCharArray());
+        }
         mqttConnectOptions.setConnectionTimeout(rpcMqttConfig.getMqttConnectionTimeout());
         mqttConnectOptions.setKeepAliveInterval(rpcMqttConfig.getMqttKeepAliveInterval());
         mqttConnectOptions.setCleanSession(true);
@@ -74,9 +78,14 @@ public class RpcMqttClient implements MqttCallbackExtended {
 
     public void destroy() throws MqttException {
         ThreadUtils.shutdownThreadPool(recieveExecutor);
-        if (mqttClient.isConnected()) {
-            mqttClient.disconnect();
-            mqttClient.close();
+        if (mqttClient != null) {
+            try {
+                if (mqttClient.isConnected()) {
+                    mqttClient.disconnect();
+                }
+            } finally {
+                mqttClient.close();
+            }
         }
     }
 
@@ -95,6 +104,9 @@ public class RpcMqttClient implements MqttCallbackExtended {
         }
         if (rpcMqttConfig.getRecieveExecutorNums() == null) {
             rpcMqttConfig.setRecieveExecutorNums(Constants.RPC_MQTT_RECIEVE_EXECUTOR_NUMS);
+        }
+        if (rpcMqttConfig.getRecieveExecutorNums() <= 0) {
+            throw new IllegalArgumentException("rpc mqtt recieveExecutorNums must be positive");
         }
         this.rpcMqttConfig = rpcMqttConfig;
     }
