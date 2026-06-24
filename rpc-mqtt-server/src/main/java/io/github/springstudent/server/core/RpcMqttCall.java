@@ -1,15 +1,13 @@
 package io.github.springstudent.server.core;
 
 import io.github.springstudent.common.bean.Constants;
-import io.github.springstudent.common.bean.RpcMqttReq;
 import io.github.springstudent.common.bean.RpcMqttRes;
 import io.github.springstudent.common.timer.Timeout;
 import io.github.springstudent.common.timer.TimerTask;
 
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * 调用结果封装
@@ -17,8 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @author ZhouNing
  **/
 public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
-
-    private static final Map<Long, RpcMqttCall> CALLS = new ConcurrentHashMap<>(128);
 
     private final int timeout;
 
@@ -32,27 +28,13 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
         return reqId;
     }
 
-    private RpcMqttCall(int timeout, long reqId) {
+    RpcMqttCall(int timeout, long reqId) {
         this.timeout = timeout;
         this.reqId = reqId;
-        CALLS.put(reqId, this);
     }
 
-    public static RpcMqttCall newRpcMqttCall(RpcMqttReq rpcMqttReq) {
-        RpcMqttCall rpcMqttCall = new RpcMqttCall(rpcMqttReq.getTimeout(), rpcMqttReq.getReqId());
-        return rpcMqttCall;
-    }
-
-    public static void startTimeout(RpcMqttReq rpcMqttReq){
-        Constants.HASHED_WHEEL_TIMER.newTimeout(new TimeoutCheck(rpcMqttReq.getReqId()), rpcMqttReq.getTimeout(), TimeUnit.MILLISECONDS);
-    }
-
-    public static RpcMqttCall removeFuture(long id) {
-        return CALLS.remove(id);
-    }
-
-    public static void destroy() {
-        CALLS.clear();
+    public void startTimeout(Function<Long, RpcMqttCall> removeFuture) {
+        Constants.HASHED_WHEEL_TIMER.newTimeout(new TimeoutCheck(reqId, removeFuture), timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -69,13 +51,16 @@ public class RpcMqttCall extends CompletableFuture<RpcMqttRes> {
 
         private final Long requestID;
 
-        TimeoutCheck(Long requestID) {
+        private final Function<Long, RpcMqttCall> removeFuture;
+
+        TimeoutCheck(Long requestID, Function<Long, RpcMqttCall> removeFuture) {
             this.requestID = requestID;
+            this.removeFuture = removeFuture;
         }
 
         @Override
         public void run(Timeout timeout) {
-            RpcMqttCall future = RpcMqttCall.removeFuture(requestID);
+            RpcMqttCall future = removeFuture.apply(requestID);
             if (future == null || future.isDone()) {
                 return;
             }

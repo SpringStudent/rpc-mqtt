@@ -13,25 +13,29 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class RpcRemoteOnlineManager {
 
-    private static Map<String, Long> REMOTE_HEARTBEAT_MAP = new ConcurrentHashMap<>();
+    private final Map<String, Long> remoteHeartbeatMap = new ConcurrentHashMap<>();
 
-    public static void heartBeat(String clientId) {
+    public void heartBeat(String clientId) {
         if (clientId == null) {
             return;
         }
-        REMOTE_HEARTBEAT_MAP.put(clientId, System.currentTimeMillis());
+        remoteHeartbeatMap.put(clientId, System.currentTimeMillis());
     }
 
-    public static List<String> onlineRemotes() {
+    public List<String> onlineRemotes() {
         List<String> result = new ArrayList<>();
         long now = System.currentTimeMillis();
-        REMOTE_HEARTBEAT_MAP.forEach((aClientId, aLong) -> {
+        remoteHeartbeatMap.forEach((aClientId, aLong) -> {
             if ((now - aLong) <= Constants.RPC_MQTT_HEARTBEAT_TIMEOUT * 1.2 * 1000L) {
                 result.add(aClientId);
             } else {
-                REMOTE_HEARTBEAT_MAP.remove(aClientId, aLong);
+                remoteHeartbeatMap.remove(aClientId, aLong);
             }
         });
         return result;
+    }
+
+    public void clear() {
+        remoteHeartbeatMap.clear();
     }
 }
