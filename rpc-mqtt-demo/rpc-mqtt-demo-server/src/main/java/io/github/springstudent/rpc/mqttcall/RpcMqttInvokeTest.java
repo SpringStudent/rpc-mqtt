@@ -88,7 +88,7 @@ public class RpcMqttInvokeTest {
         System.out.println("=====has paramAndResponse invoke start");
         RpcMqttReq rpcMqttReq6 = new RpcMqttReq();
         rpcMqttReq6.setServiceName("ExportService");
-        rpcMqttReq6.setMethodName("export");
+        rpcMqttReq6.setMethodName("export"); 
         rpcMqttReq6.setBroadcastInvoke(false);
         rpcMqttReq6.setClientId("service_client_111");
         rpcMqttReq6.addArg("{\"alpha\":[\"ddd\",\"fff\",\"ggg\"]}");
@@ -122,7 +122,7 @@ public class RpcMqttInvokeTest {
         System.out.println(rpcMqttRes8);
         System.out.println("=====timeout invoke end");
         //调用超时方法
-        System.out.println("=====timeout invoke could not happen start");
+        System.out.println("=====timeout invoke could not   start");
         RpcMqttReq rpcMqttReq9 = new RpcMqttReq();
         rpcMqttReq9.setServiceName("ExportService");
         rpcMqttReq9.setMethodName("timeout");
