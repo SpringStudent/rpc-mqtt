@@ -60,12 +60,12 @@ public class RpcMqttInvoker extends RpcMqttClient {
             clientId = doSelect(onlineRemotes);
             rpcMqttReq.setClientId(clientId);
         }
-        RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
+        RpcMqttChain chain = new RpcMqttChain(filters, req -> {
             RpcMqttCall rpcMqttCall = RpcMqttCall.newRpcMqttCall(req);
             RpcMqttInvoker.this.mqttClient.publish(Constants.RPC_MQTT_REQ_TOPIC, Constants.mqttMessage(req), null, new PublishActionListener(req));
             return new RpcMqttResult(rpcMqttCall);
         });
-        return (RpcMqttCall) (chain.doFilter(rpcMqttReq, new RpcMqttContext()).getResult());
+        return (RpcMqttCall) (chain.doFilter(rpcMqttReq).getResult());
     }
 
     private void checkRpcMqttReq(RpcMqttReq rpcMqttReq) {

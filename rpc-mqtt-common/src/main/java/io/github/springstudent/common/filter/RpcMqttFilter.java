@@ -9,6 +9,6 @@ import io.github.springstudent.common.bean.RpcMqttReq;
  **/
 public interface RpcMqttFilter extends Orderable {
 
-    RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception;
+    RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttChain chain) throws Exception;
 
 }

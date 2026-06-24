@@ -2,6 +2,7 @@ package io.github.springstudent.common.filter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author ZhouNing
@@ -13,6 +14,19 @@ public class RpcMqttContext {
     private Map<String, Object> attributes = new ConcurrentHashMap<String, Object>(4);
 
     private Object data;
+
+    private transient Consumer<Object> dataSetter;
+
+    public RpcMqttContext() {
+    }
+
+    public RpcMqttContext(Map<String, Object> attributes, Object data, Consumer<Object> dataSetter) {
+        if (attributes != null) {
+            this.attributes = attributes;
+        }
+        this.data = data;
+        this.dataSetter = dataSetter;
+    }
 
     public Object getAttribute(Class<?> clazz) {
         return attributes.get(clazz.getName());
@@ -53,6 +67,9 @@ public class RpcMqttContext {
 
     public void setData(Object data) {
         this.data = data;
+        if (dataSetter != null) {
+            dataSetter.accept(data);
+        }
     }
 
     @Override

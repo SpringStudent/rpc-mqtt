@@ -10,9 +10,9 @@ import io.github.springstudent.common.filter.RpcMqttResult;
 public class ClearContextFilter implements RpcMqttFilter {
 
     @Override
-    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
+    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttChain chain) throws Exception {
         try {
-            return chain.doFilter(rpcMqttReq, rpcMqttContext);
+            return chain.doFilter(rpcMqttReq);
         }finally {
             RpcMqttContext.removeContext();
         }

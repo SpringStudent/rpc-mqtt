@@ -12,13 +12,13 @@ import io.github.springstudent.common.filter.RpcMqttResult;
  **/
 public class ServerContextFilter implements RpcMqttFilter {
     @Override
-    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
+    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttChain chain) throws Exception {
+        RpcMqttContext requestContext = rpcMqttReq.getRpcMqttContext();
         try {
-            rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
-            rpcMqttContext.setData(RpcMqttContext.getContext().getData());
-            rpcMqttReq.getRpcMqttContext().setAttributes(rpcMqttContext.getAttributes());
-            rpcMqttReq.getRpcMqttContext().setData(rpcMqttContext.getData());
-            return chain.doFilter(rpcMqttReq, rpcMqttContext);
+            requestContext.setAttributes(RpcMqttContext.getContext().getAttributes());
+            requestContext.setData(RpcMqttContext.getContext().getData());
+            RpcMqttContext.setContext(requestContext);
+            return chain.doFilter(rpcMqttReq);
         }finally {
             RpcMqttContext.removeContext();
         }
@@ -26,6 +26,6 @@ public class ServerContextFilter implements RpcMqttFilter {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE;
     }
 }

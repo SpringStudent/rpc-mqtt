@@ -21,7 +21,7 @@ public class RpcMqttChain {
     private int index = -1;
 
     public interface Invoker {
-        RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext) throws Exception;
+        RpcMqttResult invoke(RpcMqttReq rpcMqttReq) throws Exception;
     }
 
     public RpcMqttChain(List<RpcMqttFilter> filters, Invoker invoker) {
@@ -30,11 +30,11 @@ public class RpcMqttChain {
         this.invoker = invoker;
     }
 
-    public RpcMqttResult doFilter(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext) throws Exception {
+    public RpcMqttResult doFilter(RpcMqttReq rpcMqttReq) throws Exception {
         if (index == filters.size() - 1) {
-            return invoker.invoke(rpcMqttReq, rpcMqttContext);
+            return invoker.invoke(rpcMqttReq);
         } else  {
-            return filters.get(++index).invoke(rpcMqttReq, rpcMqttContext, this);
+            return filters.get(++index).invoke(rpcMqttReq, this);
         }
     }
 

@@ -103,7 +103,7 @@ public class RpcMqttRemote extends RpcMqttClient {
                 if (rpcMqttReq.getClientId() != null && !rpcMqttReq.getClientId().equals(this.clientId)) {
                     return;
                 }
-                RpcMqttChain chain = new RpcMqttChain(filters, (req, rpcMqttContext) -> {
+                RpcMqttChain chain = new RpcMqttChain(filters, req -> {
                     Object object = exportObjectMap.get(req.getServiceName());
                     RpcMqttRes rpcMqttRes = new RpcMqttRes();
                     rpcMqttRes.setReqId(req.getReqId());
@@ -160,13 +160,11 @@ public class RpcMqttRemote extends RpcMqttClient {
                             }
                         }
                     }
-                    rpcMqttContext.setData(RpcMqttContext.getContext().getData());
-                    rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
-                    rpcMqttRes.setRpcMqttContext(rpcMqttContext);
+                    rpcMqttRes.setRpcMqttContext(RpcMqttContext.getContext());
                     RpcMqttRemote.super.publish(Constants.RPC_MQTT_RES_TOPIC, Constants.mqttMessage(rpcMqttRes));
                     return new RpcMqttResult(CompletableFuture.completedFuture(rpcMqttRes));
                 });
-                chain.doFilter(rpcMqttReq, new RpcMqttContext());
+                chain.doFilter(rpcMqttReq);
             } catch (Exception e) {
                 //couldn't happen
                 logger.error("rpc handle receive msg = {} error", payload, e);

@@ -13,11 +13,10 @@ import io.github.springstudent.common.filter.RpcMqttResult;
 public class ClientContextFilter implements RpcMqttFilter {
 
     @Override
-    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttContext rpcMqttContext, RpcMqttChain chain) throws Exception {
-        RpcMqttContext.setContext(rpcMqttReq.getRpcMqttContext());
-        rpcMqttContext.setAttributes(RpcMqttContext.getContext().getAttributes());
-        rpcMqttContext.setData(RpcMqttContext.getContext().getData());
-        return chain.doFilter(rpcMqttReq, rpcMqttContext);
+    public RpcMqttResult invoke(RpcMqttReq rpcMqttReq, RpcMqttChain chain) throws Exception {
+        RpcMqttContext requestContext = rpcMqttReq.getRpcMqttContext();
+        RpcMqttContext.setContext(requestContext);
+        return chain.doFilter(rpcMqttReq);
     }
 
     @Override
