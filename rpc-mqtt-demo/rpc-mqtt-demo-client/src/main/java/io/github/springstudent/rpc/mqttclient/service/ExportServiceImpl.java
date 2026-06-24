@@ -45,7 +45,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public void timeout() {
         try {
-            Thread.sleep(3100);
+            Thread.sleep(5100);
         } catch (InterruptedException e) {
 
         }

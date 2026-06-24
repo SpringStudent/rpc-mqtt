@@ -1,0 +1,1 @@
+- 2026-06-24: When adding an API that claims to dispatch internally, do not return `CompletableFuture<?>` if callers must immediately cast unless the user explicitly chooses that breaking signature change. Prefer a typed result wrapper or separate typed methods by default so the caller does not inherit the dispatch burden.

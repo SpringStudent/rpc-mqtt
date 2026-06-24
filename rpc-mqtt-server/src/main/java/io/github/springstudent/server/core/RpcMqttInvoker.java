@@ -2,7 +2,6 @@ package io.github.springstudent.server.core;
 
 import io.github.springstudent.common.bean.*;
 import io.github.springstudent.common.filter.RpcMqttChain;
-import io.github.springstudent.common.filter.RpcMqttContext;
 import io.github.springstudent.common.filter.RpcMqttResult;
 import io.github.springstudent.common.filter.server.ServerContextFilter;
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +58,10 @@ public class RpcMqttInvoker extends RpcMqttClient {
         }
         String clientId = null;
         if (rpcMqttReq.isBroadcastInvoke()) {
+            // 广播模式：clientId 置空，请求扇出给所有在线服务提供方。
+            // 每个提供方都会收到并处理请求，消费者取最先到达的响应，
+            // 后续响应自动丢弃（fastest-responder 语义）。
+            // 不支持多结果聚合，如需收集全部结果应在调用方自行循环。
             rpcMqttReq.setClientId(null);
         } else if (rpcMqttReq.getClientId() == null) {
             clientId = doSelect(onlineRemotes);

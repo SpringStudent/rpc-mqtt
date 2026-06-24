@@ -16,6 +16,25 @@ public class RpcMqttReq extends RpcMqttPayLoad {
 
     private static final AtomicLong CALL_ID;
 
+    /**
+     * 广播调用模式（fastest-responder 语义）。
+     * <p>
+     * true  = 请求通过 MQTT 扇出给所有在线服务提供方，取<strong>最先到达</strong>的响应，
+     *         后续响应自动丢弃。适用于容错场景：只要有任意一个提供方成功即可。
+     *         不保证所有提供方都执行完毕，不支持多结果聚合。
+     * <p>
+     * false = 请求发给单个提供方（自动负载均衡随机选择，或通过 clientId 指定）。
+     *         等特定一个提供方返回结果。
+     * <p>
+     * 如果需要对所有提供方依次调用并收集每个结果，应在调用方自行循环：
+     * <pre>{@code
+     * for (String id : onlineRemotes) {
+     *     req.setClientId(id);
+     *     RpcMqttRes res = invoker.call(req).get();
+     *     // 处理每个结果
+     * }
+     * }</pre>
+     */
     private boolean broadcastInvoke = false;
 
     private String serviceName;
