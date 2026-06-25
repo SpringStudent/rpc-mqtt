@@ -39,9 +39,10 @@ public class RpcMqttInvoker extends RpcMqttClient {
         this.recieveExecutor = ThreadUtils.newBoundedThreadPool(rpcMqttConfig.getRecieveExecutorNums(), new NamedThreadFactory("rpc-mqtt-invoker-"));
         this.initLatch = new CountDownLatch(1);
         super.connect(rpcMqttConfig);
-        if(!initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS)){
+        if (!initLatch.await(rpcMqttConfig.getMqttConnectionTimeout(), TimeUnit.SECONDS)) {
             throw new IllegalStateException("init rpcMqttInvoker error,connect timeout");
-        };
+        }
+        ;
     }
 
     public RpcMqttCall call(RpcMqttReq rpcMqttReq) throws Exception {
@@ -99,6 +100,10 @@ public class RpcMqttInvoker extends RpcMqttClient {
     protected String doSelect(List<String> onlineRemotes) {
         int length = onlineRemotes.size();
         return onlineRemotes.get(ThreadLocalRandom.current().nextInt(length));
+    }
+
+    public List<String> onlineRemotes() {
+        return remoteOnlineManager.onlineRemotes();
     }
 
     @Override
